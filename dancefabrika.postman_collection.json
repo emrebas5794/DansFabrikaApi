@@ -1,0 +1,967 @@
+{
+	"info": {
+		"_postman_id": "a3cf282f-a87c-4bc1-9c60-48992abcffd4",
+		"name": "dancefabrika",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12503060"
+	},
+	"item": [
+		{
+			"name": "slider",
+			"item": [
+				{
+					"name": "Get All Slider",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{local}}/v1/slider",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"v1",
+								"slider"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Slider By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{local}}/v1/slider/2",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"v1",
+								"slider",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Slider",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{local}}/v1/slider/1",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"v1",
+								"slider",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Slider",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"queue\":1,\r\n\"name\":\"test\",\r\n\"description\":\"test\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{local}}/v1/slider",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"v1",
+								"slider"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Slider",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"queue\":1,\r\n    \"name\":\"tetetete\",\r\n    \"description\":\"test\",\r\n    \"id\":2,\r\n    \"status\":1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{local}}/v1/slider",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"v1",
+								"slider"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Image",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Users/Erenn/Downloads/1h.svg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{local}}/v1/slider",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"v1",
+								"slider"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "student",
+			"item": [
+				{
+					"name": "Get All Student",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{local}}/v1/student?order={\"column\":\"id\",\"type\":\"DESC\"}&take=10&page=1",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"v1",
+								"student"
+							],
+							"query": [
+								{
+									"key": "order",
+									"value": "{\"column\":\"id\",\"type\":\"DESC\"}"
+								},
+								{
+									"key": "take",
+									"value": "10"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Student By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{local}}/v1/student/2",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"v1",
+								"student",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Student",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{local}}/v1/student/1",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"v1",
+								"student",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Student",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"test\",\r\n    \"identity\": \"156456465\",\r\n    \"email\": \"erenbas.info@gmail.com\",\r\n    \"phone\": \"905512708926\",\r\n    \"password\": \"tetetete\",\r\n    \"gender\": 1,\r\n    \"birthday\": \"2023-04-18T19:30:05.940Z\",\r\n    \"credit\": 4,\r\n    \"score\": 100,\r\n    \"reference\": 456235,\r\n    \"referenceId\": 1,\r\n    \"status\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{local}}/v1/student",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"v1",
+								"student"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Student",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 2,\r\n    \"name\": \"updated\",\r\n    \"identity\": \"156456465\",\r\n    \"email\": \"erenbas.info@gmail.com\",\r\n    \"phone\": \"905512708926\",\r\n    \"password\": \"tetetete\",\r\n    \"gender\": 1,\r\n    \"birthday\": \"2023-04-18T19:30:05.940Z\",\r\n    \"credit\": 4,\r\n    \"score\": 100,\r\n    \"reference\": 456235,\r\n    \"referenceId\": 1,\r\n    \"status\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{local}}/v1/student",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"v1",
+								"student"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Image",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "id",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Users/Erenn/Downloads/1h.svg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{local}}/v1/student",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"v1",
+								"student"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "calendar",
+			"item": [
+				{
+					"name": "Get All Calendar",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{local}}/v1/calendar",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"v1",
+								"calendar"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Calendar By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{local}}/v1/calendar/2",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"v1",
+								"calendar",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Calendar",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{local}}/v1/calendar/2",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"v1",
+								"calendar",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Calendar",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "queue",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "test",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Users/Erenn/Downloads/WhatsApp Image 2023-01-05 at 20.28.26.jpeg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{local}}/v1/calendar",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"v1",
+								"calendar"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Calendar",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"queue\":1,\r\n\"name\":\"tetetete\",\r\n\"id\":2,\r\n\"status\":1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{local}}/v1/calendar",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"v1",
+								"calendar"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Image",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "id",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Users/Erenn/Downloads/m.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{local}}/v1/calendar/image",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"v1",
+								"calendar",
+								"image"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "admin",
+			"item": [
+				{
+					"name": "Get All Admin",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{local}}/v1/admin",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"v1",
+								"admin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Admin By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{local}}/v1/admin/1",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"v1",
+								"admin",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Admin",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{local}}/v1/admin/1",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"v1",
+								"admin",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Admin",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"test\",\r\n    \"email\": \"erenbas.info@gmail.com\",\r\n    \"password\": \"tetetete\",\r\n    \"role\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{local}}/v1/admin",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"v1",
+								"admin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Admin",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 1,\r\n    \"name\": \"test\",\r\n    \"email\": \"erenbas.info@gmail.com\",\r\n    \"password\": \"tetetete\",\r\n    \"role\": 1,\r\n    \"status\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{local}}/v1/admin",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"v1",
+								"admin"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "dance type",
+			"item": [
+				{
+					"name": "Get All Dance Type",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{local}}/v1/dance-type",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"v1",
+								"dance-type"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Dance Type By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{local}}/v1/dance-type/1",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"v1",
+								"dance-type",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Dance Type",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{local}}/v1/dance-type/1",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"v1",
+								"dance-type",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Dance Type",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"test\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{local}}/v1/dance-type",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"v1",
+								"dance-type"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Dance Type",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 1,\r\n    \"name\": \"updated\",\r\n    \"status\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{local}}/v1/dance-type",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"v1",
+								"dance-type"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "dance level",
+			"item": [
+				{
+					"name": "Get All Dance Level",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{local}}/v1/dance-level",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"v1",
+								"dance-level"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Dance Level By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{local}}/v1/dance-level/1",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"v1",
+								"dance-level",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Dance Level",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{local}}/v1/dance-level/1",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"v1",
+								"dance-level",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Dance Level",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"test\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{local}}/v1/dance-level",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"v1",
+								"dance-level"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Dance Level",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 1,\r\n    \"name\": \"updated\",\r\n    \"status\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{local}}/v1/dance-level",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"v1",
+								"dance-level"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "package",
+			"item": [
+				{
+					"name": "Get All Package",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{local}}/v1/package",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"v1",
+								"package"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Package By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{local}}/v1/package/1",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"v1",
+								"package",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Package",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{local}}/v1/package/1",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"v1",
+								"package",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Package",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"test\",\r\n    \"description\": \"test\",\r\n    \"price\": 15.26,\r\n    \"credit\": 3\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{local}}/v1/package",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"v1",
+								"package"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Package",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 1,\r\n    \"name\": \"updated\",\r\n    \"status\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{local}}/v1/dance-level",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"v1",
+								"dance-level"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "local",
+			"value": "localhost:3000",
+			"type": "string"
+		}
+	]
+}
