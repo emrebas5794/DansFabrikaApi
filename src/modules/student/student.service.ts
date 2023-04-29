@@ -94,7 +94,8 @@ export class StudentService {
     return this.studentRepistory.update(updateStudentImageDto.id, { image: file.filename });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} student`;
+  async remove(id: number) {
+    const slider = await this.findOne(id);
+    return this.studentRepistory.update(slider.id, { status: -1 });
   }
 }

@@ -5,6 +5,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Admin } from './entities/admin.entity';
 import { Repository } from 'typeorm';
 import { EErrors } from 'src/common/enums';
+import { UpdatePasswordDto } from './dto/update-password.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AdminService {
@@ -37,6 +39,13 @@ export class AdminService {
     else{
       throw new HttpException({ message: [EErrors.HAVENT_RECORD] }, HttpStatus.BAD_REQUEST);
     }
+  }
+  
+
+  async updatePassword(updatePasswordDto: UpdatePasswordDto) {
+    await this.findOne(updatePasswordDto.id);
+    updatePasswordDto.password = await bcrypt.hash(updatePasswordDto.password, 10);
+    return this.adminRepository.update(updatePasswordDto.id, { password: updatePasswordDto.password });
   }
 
   async remove(id: number) {

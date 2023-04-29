@@ -10,10 +10,15 @@ import { StudentModule } from './modules/student/student.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { APP_INTERCEPTOR, RouterModule } from '@nestjs/core';
+import { RouterModule } from '@nestjs/core';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { DanceLevelModule } from './modules/dance-level/dance-level.module';
 import { DanceTypeModule } from './modules/dance-type/dance-type.module';
+import { TrainerModule } from './modules/trainer/trainer.module';
+import { SalesModule } from './modules/sales/sales.module';
+import { CourseStudentsModule } from './modules/course-students/course-students.module';
+import { LessonsModule } from './modules/lessons/lessons.module';
+import { AttendanceModule } from './modules/attendance/attendance.module';
 
 @Module({
   imports: [
@@ -69,7 +74,12 @@ import { DanceTypeModule } from './modules/dance-type/dance-type.module';
       }
     }),
     DanceLevelModule,
-    DanceTypeModule
+    DanceTypeModule,
+    TrainerModule,
+    SalesModule,
+    CourseStudentsModule,
+    LessonsModule,
+    AttendanceModule
   ],
   controllers: [AppController],
   providers: [AppService],

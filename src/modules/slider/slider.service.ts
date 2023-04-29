@@ -10,8 +10,8 @@ import { UpdateSliderImageDto } from './dto/update-slider-image.dto';
 
 @Injectable()
 export class SliderService {
-  constructor(@InjectRepository(Slider) private sliderRepository: Repository<Slider>) {}
-  
+  constructor(@InjectRepository(Slider) private sliderRepository: Repository<Slider>) { }
+
   async create(createSliderDto: CreateSliderDto) {
     return await this.sliderRepository.save(createSliderDto);
   }
@@ -32,16 +32,12 @@ export class SliderService {
 
   async update(updateSliderDto: UpdateSliderDto) {
     const slider = await this.findOne(updateSliderDto.id);
-    if (slider) {
-      const updated = Object.assign(slider, updateSliderDto);
-      return this.sliderRepository.update({ id: updateSliderDto.id }, updated);
-    }
-    else {
-      throw new HttpException({ message: [EErrors.HAVENT_RECORD] }, HttpStatus.BAD_REQUEST);
-    }
+    const updated = Object.assign(slider, updateSliderDto);
+    delete updated.id;
+    return this.sliderRepository.update(updateSliderDto.id, updated);
   }
 
-  async updateImage(updateSliderImageDto: UpdateSliderImageDto, file: Express.Multer.File){
+  async updateImage(updateSliderImageDto: UpdateSliderImageDto, file: Express.Multer.File) {
     const slider = await this.findOne(updateSliderImageDto.id);
     if (slider) {
       await fs.unlinkSync(`${process.env.IMAGES_URL}${slider.image}`)
@@ -51,11 +47,6 @@ export class SliderService {
 
   async remove(id: number) {
     const slider = await this.findOne(id);
-    if (slider) {
-      return this.sliderRepository.update(id, { status: -1 })
-    }
-    else {
-      throw new HttpException({ message: [EErrors.HAVENT_RECORD] }, HttpStatus.BAD_REQUEST);
-    }
+    return this.sliderRepository.update(slider.id, { status: -1 });
   }
 }

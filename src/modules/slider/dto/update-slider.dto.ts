@@ -1,7 +1,7 @@
 import { IsNotEmpty, IsString, Length, IsNumberString, IsOptional, IsNumber } from "class-validator";
 import { EErrors } from "src/common/enums";
 
-export class UpdateSliderDto {    
+export class UpdateSliderDto {
     @IsNumber()
     @IsNotEmpty({ message: EErrors.ID_REQUIRED })
     readonly id: number;
