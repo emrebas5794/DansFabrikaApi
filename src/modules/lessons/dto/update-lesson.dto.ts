@@ -2,7 +2,7 @@ import { IsNotEmpty, IsNumber } from "class-validator";
 import { EErrors } from "src/common/enums";
 
 
-export class UpdateLessonDto {    
+export class UpdateLessonDto {
     @IsNumber()
     @IsNotEmpty({ message: EErrors.ID_REQUIRED })
     readonly id: number;

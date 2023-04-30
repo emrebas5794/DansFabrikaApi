@@ -16,4 +16,5 @@ export class CreateAttendanceDto {
 
     @IsNumber()
     @IsNotEmpty({ message: EErrors.STUDENT_REQUIRED })
-    readonly studentId: number;}
+    readonly studentId: number;
+}
