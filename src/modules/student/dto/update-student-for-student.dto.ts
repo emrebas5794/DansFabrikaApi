@@ -13,7 +13,6 @@ export class UpdateStudenForStudenttDto {
     readonly name: string;
     
     @IsString()
-    @IsNotEmpty({ message: EErrors.IDENTITY_REQUIRED })
     readonly identity: string;
     
     @IsEmail({}, { message: EErrors.EMAIL_INVALID })
@@ -21,9 +20,9 @@ export class UpdateStudenForStudenttDto {
     readonly email: string;
 
     @IsOptional()
-    @IsNumber()
-    readonly country: number;
+    readonly country: string;
     
+    @IsOptional()
     readonly gender: number;
     
     @IsOptional()

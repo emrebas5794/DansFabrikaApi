@@ -25,7 +25,7 @@ export class Student {
     image: string;
     
     @Column()
-    country: number;
+    country: string;
 
     @Column()
     gender: number;

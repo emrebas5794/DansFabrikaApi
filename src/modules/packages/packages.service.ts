@@ -8,10 +8,14 @@ import { EErrors } from 'src/common/enums';
 
 @Injectable()
 export class PackagesService {
-  constructor(@InjectRepository(Package) private packageRepository: Repository<Package>) {  }
+  constructor(@InjectRepository(Package) private packageRepository: Repository<Package>) { }
 
   create(createPackageDto: CreatePackageDto) {
     return this.packageRepository.save(createPackageDto);
+  }
+
+  findAllForStudent() {
+    return this.packageRepository.find({ where: { status: 1 } });
   }
 
   findAll() {

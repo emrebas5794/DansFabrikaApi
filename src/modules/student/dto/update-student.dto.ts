@@ -25,8 +25,7 @@ export class UpdateStudentDto {
     readonly phone: string;
 
     @IsOptional()
-    @IsNumber()
-    readonly country: number;
+    readonly country: string;
     
     readonly gender: number;
     

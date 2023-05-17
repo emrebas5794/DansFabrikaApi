@@ -24,8 +24,7 @@ export class CreateStudentDto {
     password: string;
 
     @IsOptional()
-    @IsNumber()
-    readonly country: number;
+    readonly country: string;
     
     @IsOptional()
     @IsNumber()

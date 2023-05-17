@@ -40,7 +40,6 @@ export class AuthService {
     }
 
     async adminLogin(credentials: JwtPayload) {
-        console.log("hadi be");
         return { accessToken: this.jwtService.sign(credentials, { expiresIn: '1 days' }) };
     }
 
@@ -54,7 +53,7 @@ export class AuthService {
     Yarın baktığımda anlaması kolay olsun istedim.
     */
     async studentLogin(credentials: JwtPayload) {
-        return { accessToken: this.jwtService.sign({ id: credentials.id, email: credentials.email, image: credentials.image, status: credentials.status }, { expiresIn: '1 days' }) };
+        return { accessToken: this.jwtService.sign({ id: credentials.id, email: credentials.email, image: credentials.image, status: credentials.status }, { expiresIn: '30 days' }) };
     }
 
     async validateStudentCredentials(loginDto: LoginDto): Promise<any> {
@@ -98,11 +97,18 @@ export class AuthService {
         }
     }
 
+    async forgotPassword() {
+        return { accessToken: this.jwtService.sign({ phone: '0555555555', type: 'forgot' }, { expiresIn: '2 min' }) };
+    }
+
     async verification(credentials: any, code: number) {
         const student = await this.studentService.verification(credentials.phone, code);
-        console.log("burada => ", student);
         if (!student) { throw new UnauthorizedException(); }
         return { accessToken: this.jwtService.sign({ id: student.id, email: student.email, image: student.image, status: 1 }, { expiresIn: '1 days' }) };
+    }
+    
+    async passwordVerification() {
+
     }
 
     /* ----- STUDENT ----- */

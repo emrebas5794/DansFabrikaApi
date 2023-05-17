@@ -5,9 +5,7 @@ import { VerificationGuard } from 'src/common/guards/verification/verification.g
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { v4 } from "uuid";
-import { UpdateStudentImageDto } from 'src/modules/student/dto/update-image.dto';
 import { UpdateStudenForStudenttDto } from 'src/modules/student/dto/update-student-for-student.dto';
-import { StudentStrategy } from './strategies/student.strategy';
 import { RegisterDto } from './dto/register.dto';
 
 @Controller({ path: 'auth', version: '1' })
@@ -16,8 +14,18 @@ export class AuthController {
 
   @UseGuards(AuthGuard('student'))
   @Post('login')
-  async login(@Req() req) {
-    return this.authService.studentLogin(req.user);
+  async login(@Req() req, @Res({ passthrough: true }) res) {
+    const result = await this.authService.studentLogin(req.user);
+    res.cookie('token', result.accessToken, { secure: true, domain: process.env.FRONTEND_DOMAIN, httpOnly: true });
+    return result;
+  }
+
+  @UseGuards(AuthGuard('admin'))
+  @Post('/admin/login')
+  async adminLogin(@Req() req, @Res({ passthrough: true }) res) {
+    const result = await this.authService.adminLogin(req.user);
+    res.cookie('token', result.accessToken, { secure: true, domain: process.env.FRONTEND_DOMAIN, httpOnly: true });
+    return result;
   }
 
   @Post('register')
@@ -56,7 +64,7 @@ export class AuthController {
   @UseGuards(AuthGuard('local'))
   @Post('forgot-password')
   async forgotPassword(@Req() req) {
-    return;
+    return; 
   }
 
   @UseGuards(VerificationGuard)
