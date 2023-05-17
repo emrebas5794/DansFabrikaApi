@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AuthModule } from './auth/auth.module';
 import { SliderModule } from './modules/slider/slider.module';
 import { CalendarModule } from './modules/calendar/calendar.module';
 import { PackagesModule } from './modules/packages/packages.module';
@@ -19,13 +18,17 @@ import { SalesModule } from './modules/sales/sales.module';
 import { CourseStudentsModule } from './modules/course-students/course-students.module';
 import { LessonsModule } from './modules/lessons/lessons.module';
 import { AttendanceModule } from './modules/attendance/attendance.module';
+import { CourseModule } from './modules/course/course.module';
+import { SmsModule } from './common/sms/sms.module';
+import { MailModule } from './common/mail/mail.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: './env/.development.env',
+      envFilePath: '.env',
     }),
-    AuthModule, SliderModule, CalendarModule, PackagesModule, AdminModule, StudentModule,
+    SliderModule, CalendarModule, PackagesModule, AdminModule, StudentModule,
     MulterModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -39,7 +42,7 @@ import { AttendanceModule } from './modules/attendance/attendance.module';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (config: ConfigService) => {
-        return { 
+        return {
           type: 'mysql',
           host: config.get('DATABASE_HOST'),
           port: Number(config.get('DATABASE_PORT')),
@@ -79,9 +82,13 @@ import { AttendanceModule } from './modules/attendance/attendance.module';
     SalesModule,
     CourseStudentsModule,
     LessonsModule,
-    AttendanceModule
+    AttendanceModule,
+    CourseModule,
+    SmsModule,
+    MailModule,
+    AuthModule
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

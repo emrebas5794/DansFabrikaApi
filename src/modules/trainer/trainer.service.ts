@@ -12,7 +12,7 @@ import * as fs from 'fs';
 
 @Injectable()
 export class TrainerService {
-  constructor(@InjectRepository(Trainer) private trainerRepository: Repository<Trainer>) {  }
+  constructor(@InjectRepository(Trainer) private trainerRepository: Repository<Trainer>) { }
 
   async create(createTrainerDto: CreateTrainerDto) {
     const exisEmail = await this.trainerRepository.findOne({ where: { email: createTrainerDto.email } });
@@ -49,11 +49,13 @@ export class TrainerService {
     updatePasswordDto.password = await bcrypt.hash(updatePasswordDto.password, 10);
     return this.trainerRepository.update(updatePasswordDto.id, { password: updatePasswordDto.password });
   }
-  
-  async updateImage(updateTrainerImageDto: UpdateTrainerImageDto, file: Express.Multer.File){
+
+  async updateImage(updateTrainerImageDto: UpdateTrainerImageDto, file: Express.Multer.File) {
     const trainer = await this.findOne(updateTrainerImageDto.id);
     if (trainer.image) {
-      await fs.unlinkSync(`${process.env.IMAGES_URL}${trainer.image}`)
+      fs.unlink(`${process.env.IMAGES_URL}${trainer.image}`, (err) => {
+        console.log(err); // Log sistemi kurulunca buraya da bak
+      })
     }
     return this.trainerRepository.update(updateTrainerImageDto.id, { image: file.filename });
   }

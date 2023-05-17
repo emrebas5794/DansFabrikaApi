@@ -39,8 +39,10 @@ export class SliderService {
 
   async updateImage(updateSliderImageDto: UpdateSliderImageDto, file: Express.Multer.File) {
     const slider = await this.findOne(updateSliderImageDto.id);
-    if (slider) {
-      await fs.unlinkSync(`${process.env.IMAGES_URL}${slider.image}`)
+    if (slider.image) {
+      fs.unlink(`${process.env.IMAGES_URL}${slider.image}`, (err) => {
+        console.log(err); // Log sistemi kurulunca buraya da bak
+      })
     }
     return this.sliderRepository.update(updateSliderImageDto.id, { image: file.filename });
   }

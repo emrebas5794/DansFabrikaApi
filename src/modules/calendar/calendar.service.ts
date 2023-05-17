@@ -10,8 +10,8 @@ import { UpdateCalendarImageDto } from './dto/update-calendar-image.dto';
 
 @Injectable()
 export class CalendarService {
-  constructor(@InjectRepository(Calendar) private calendarRepository: Repository<Calendar>) {}
- 
+  constructor(@InjectRepository(Calendar) private calendarRepository: Repository<Calendar>) { }
+
   async create(createCalendarDto: CreateCalendarDto) {
     return await this.calendarRepository.save(createCalendarDto);
   }
@@ -31,7 +31,7 @@ export class CalendarService {
   }
 
   async update(updateCalendarDto: UpdateCalendarDto) {
-    const calendar = await this.findOne(updateCalendarDto.id);    
+    const calendar = await this.findOne(updateCalendarDto.id);
     if (calendar) {
       const updated = Object.assign(calendar, updateCalendarDto);
       return this.calendarRepository.update({ id: updateCalendarDto.id }, updated);
@@ -40,15 +40,17 @@ export class CalendarService {
       throw new HttpException({ message: [EErrors.HAVENT_RECORD] }, HttpStatus.BAD_REQUEST);
     }
   }
-  
-  async updateImage(updateCalendarImageDto: UpdateCalendarImageDto, file: Express.Multer.File){
+
+  async updateImage(updateCalendarImageDto: UpdateCalendarImageDto, file: Express.Multer.File) {
     const calendar = await this.findOne(updateCalendarImageDto.id);
     if (calendar.image) {
-      await fs.unlinkSync(`${process.env.IMAGES_URL}${calendar.image}`)
+      fs.unlink(`${process.env.IMAGES_URL}${calendar.image}`, (err) => {
+        console.log(err); // Log sistemi kurulunca buraya da bak
+      })
     }
     return this.calendarRepository.update(updateCalendarImageDto.id, { image: file.filename });
   }
- 
+
   async remove(id: number) {
     const calendar = await this.findOne(id);
     if (calendar) {

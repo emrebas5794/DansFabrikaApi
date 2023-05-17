@@ -30,6 +30,10 @@ export class AdminService {
     }
   }
 
+  async findOneForAuth(email) {
+    return this.adminRepository.findOne({ where: { email }, select: ['id', 'name', 'role', 'password', 'email', 'status'] });
+  }
+
   async update(updateAdminDto: UpdateAdminDto) {
     const admin = await this.findOne(updateAdminDto.id);
     if (admin) {

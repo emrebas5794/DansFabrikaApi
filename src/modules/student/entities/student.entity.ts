@@ -45,7 +45,7 @@ export class Student {
     @Column()
     referenceId: number;
     
-    @Column({ select: false })
+    @Column()
     code: number;
     
     @Column()

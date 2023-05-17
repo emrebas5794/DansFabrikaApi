@@ -23,10 +23,6 @@ export class UpdateStudentDto {
     @IsString()
     @IsNotEmpty({ message: EErrors.PHONE_REQUIRED })
     readonly phone: string;
-    
-    @Length(8, 60, { message: EErrors.PASSWORD_MIN })
-    @IsNotEmpty({ message: EErrors.PASSWORD_REQUIRED })
-    readonly password: string;
 
     @IsOptional()
     @IsNumber()

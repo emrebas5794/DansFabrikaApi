@@ -12,12 +12,14 @@ import { PageMetaDto } from '../pagination/page-meta.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { UpdateStudentImageDto } from './dto/update-image.dto';
 import * as fs from 'fs';
+import { RegisterDto } from 'src/auth/dto/register.dto';
+import { UpdateStudenForStudenttDto } from './dto/update-student-for-student.dto';
 
 @Injectable()
 export class StudentService {
   constructor(@InjectRepository(Student) private studentRepistory: Repository<Student>) { }
 
-  async create(createStudentDto: CreateStudentDto) {
+  async create(createStudentDto: CreateStudentDto | RegisterDto) {
     const exisEmail = await this.studentRepistory.findOne({ where: { email: createStudentDto.email } });
     if (exisEmail) { // TODO burayı sor hangi alanları kontrol edelim
       throw new HttpException({ message: [EErrors.EMAIL_UNIQUE] }, HttpStatus.BAD_REQUEST);
@@ -36,7 +38,7 @@ export class StudentService {
 
   async findAll(pageOptionsDto: PageOptionsDto): Promise<PageDto<Student>> {
     const qb = this.studentRepistory.createQueryBuilder("student");
-    qb.skip((pageOptionsDto.page -1) * pageOptionsDto.take).take(pageOptionsDto.take).orderBy("student.id", "DESC");
+    qb.skip((pageOptionsDto.page - 1) * pageOptionsDto.take).take(pageOptionsDto.take).orderBy("student.id", "DESC");
     if (pageOptionsDto.order) {
       const verifyOrderData = new VerifyOrderData(this.studentRepistory.metadata.columns.map(column => column.propertyName), pageOptionsDto.order);
       const verify = await verifyOrderData.verify();
@@ -67,31 +69,59 @@ export class StudentService {
     }
   }
 
+  async findOneForAuth(email) {
+    return this.studentRepistory.findOne({ where: { email }, select: ['id', 'name', 'image', 'password', 'email', 'status', 'code'] });
+  }
+
+  async updateCode(id, code) {
+    return this.studentRepistory.update(id, { code });
+  }
+
+  // FIXME TÜM UPDATE İŞLEMLERİNDE, DTO İÇERİSİNDE OLMAYAN PARAMETRELERİ SİLMELİSİN
+  // FIXME TÜM UPDATE İŞLEMLERİNDE, DTO İÇERİSİNDE OLMAYAN PARAMETRELERİ SİLMELİSİN
+  // FIXME TÜM UPDATE İŞLEMLERİNDE, DTO İÇERİSİNDE OLMAYAN PARAMETRELERİ SİLMELİSİN
+  // FIXME TÜM UPDATE İŞLEMLERİNDE, DTO İÇERİSİNDE OLMAYAN PARAMETRELERİ SİLMELİSİN
+
   async update(updateStudentDto: UpdateStudentDto) {
     const student = await this.findOne(updateStudentDto.id);
-    if (student) {
-      const updated = Object.assign(student, updateStudentDto);
-      console.log(updated, updateStudentDto);
-      delete updated.password;
-      return await this.studentRepistory.update({ id: updated.id }, updated);
-    }
-    else {
-      throw new HttpException({ message: [EErrors.HAVENT_RECORD] }, HttpStatus.BAD_REQUEST);
-    }
+    // const updated = Object.assign(student, updateStudentDto);
+    // console.log(updateStudentDto);
+    // Object.keys
+    return await this.studentRepistory.update(student.id, updateStudentDto);
+  }
+
+  async updateForStudent(updateStudentForStudent: UpdateStudenForStudenttDto) {
+    const student = await this.findOne(updateStudentForStudent.id);
+    return await this.studentRepistory.update(student.id, updateStudentForStudent);
   }
 
   async updatePassword(updatePasswordDto: UpdatePasswordDto) {
     await this.findOne(updatePasswordDto.id);
     updatePasswordDto.password = await bcrypt.hash(updatePasswordDto.password, 10);
-    return this.studentRepistory.update({ id: updatePasswordDto.id }, { password: updatePasswordDto.password });
+    return this.studentRepistory.update(updatePasswordDto.id, { password: updatePasswordDto.password });
   }
-  
-  async updateImage(updateStudentImageDto: UpdateStudentImageDto, file: Express.Multer.File){
-    const calendar = await this.findOne(updateStudentImageDto.id);
-    if (calendar.image) {
-      await fs.unlinkSync(`${process.env.IMAGES_URL}${calendar.image}`)
+
+  async updateImage(updateStudentImageDto: UpdateStudentImageDto | any, file: Express.Multer.File) {
+    const student = await this.findOne(updateStudentImageDto.id);
+
+    if (student.image) {
+      fs.unlink(`${process.env.IMAGES_URL}${student.image}`, (err) => {
+        console.log(err); // Log sistemi kurulunca buraya da bak
+      })
     }
     return this.studentRepistory.update(updateStudentImageDto.id, { image: file.filename });
+  }
+
+  async verification(phone: string, code: number) {
+    const student = await this.studentRepistory.findOne({ where: { phone } });
+    if (Number(student.code) === Number(code)) {
+      await this.studentRepistory.update(student.id, { status: 1 });
+      await this.updateCode(student.id, Math.floor(100000 + Math.random() * 900000));
+      return student;
+    }
+    else {
+      return false;
+    }
   }
 
   async remove(id: number) {

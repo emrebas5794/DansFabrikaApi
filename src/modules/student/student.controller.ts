@@ -8,6 +8,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { v4 } from "uuid";
 import { UpdateStudentImageDto } from './dto/update-image.dto';
+import { DtoCleaningPipe } from 'src/common/pipes/dto-cleaning/dto-cleaning.pipe';
 
 @Controller({ path: 'student', version: '1' })
 export class StudentController {
