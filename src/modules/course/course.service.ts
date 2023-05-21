@@ -3,8 +3,10 @@ import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Course } from './entities/course.entity';
-import { Repository } from 'typeorm';
-import { EErrors } from 'src/common/enums';
+import { Between, Repository } from 'typeorm';
+import { EErrors, EStatus } from 'src/common/enums';
+import { ECourseTypes } from 'src/common/enums/course-type.enum';
+import { startOfDay, endOfDay } from 'date-fns';
 
 @Injectable()
 export class CourseService {
@@ -16,6 +18,26 @@ export class CourseService {
 
   findAll() {
     return this.courseRepository.find({ relations: ["danceType", "danceLevel", "trainer"] });
+  }
+
+  async findAllForStudent() {
+    const courses = await this.courseRepository.find({ where: [ { courseType: ECourseTypes.KIDS, status: EStatus.ACTIVE }, { courseType: ECourseTypes.ACADEMY, status: EStatus.ACTIVE } ], relations: ["danceType", "danceLevel", "trainer"] });
+    if (courses.length > 0) {
+      return courses;
+    }
+    else {
+      throw new HttpException({ message: [EErrors.HAVENT_RECORD] }, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async findAllForWorkShop(date: Date) {    
+    const courses = await this.courseRepository.find({ where: { startDate: Between(startOfDay(date).toISOString(), endOfDay(date).toISOString()) }, relations: ["danceType", "danceLevel", "trainer"] });
+    if (courses.length > 0) {
+      return courses;
+    }
+    else {
+      throw new HttpException({ message: [EErrors.HAVENT_RECORD] }, HttpStatus.BAD_REQUEST);
+    }
   }
 
   async findOne(id: number) {

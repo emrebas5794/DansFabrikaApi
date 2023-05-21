@@ -19,6 +19,7 @@ export class PackagesController {
   }
 
   @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(ERoles.STUDENT, ERoles.ADMIN)
   @Get()
   findAll(@Req() req) {
     if (req.user.role === undefined) {

@@ -24,12 +24,14 @@ export class TrainerController {
   }
 
   @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(ERoles.STUDENT, ERoles.ADMIN)
   @Get()
   findAll() {
     return this.trainerService.findAll();
   }
 
   @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(ERoles.STUDENT, ERoles.ADMIN)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.trainerService.findOne(+id);

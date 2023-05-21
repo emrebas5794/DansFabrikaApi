@@ -23,7 +23,7 @@ export class CalendarController {
   }
 
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles(ERoles.ADMIN)
+  @Roles(ERoles.STUDENT, ERoles.ADMIN)
   @Get()
   findAll() {
     return this.calendarService.findAll();

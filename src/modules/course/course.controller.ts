@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put, UseGuards, Req } from '@nestjs/common';
 import { CourseService } from './course.service';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
@@ -19,10 +19,21 @@ export class CourseController {
   }
 
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles(ERoles.ADMIN)
+  @Roles(ERoles.STUDENT, ERoles.ADMIN)
   @Get()
-  findAll() {
+  findAll(@Req() req) {
+    if (req.user.role === undefined) {
+      return this.courseService.findAllForStudent();
+    }
     return this.courseService.findAll();
+  }
+  
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(ERoles.STUDENT, ERoles.ADMIN)
+  @Get('workshop/:date')
+  findAllForWorkShop(@Param('date') date: string) {
+    const formattedDate: Date = new Date(date);
+    return this.courseService.findAllForWorkShop(formattedDate);
   }
 
   @UseGuards(AuthGuard('jwt'), RolesGuard)

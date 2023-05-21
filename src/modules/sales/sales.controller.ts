@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put, UseGuards, Req } from '@nestjs/common';
 import { SalesService } from './sales.service';
 import { CreateSaleDto } from './dto/create-sale.dto';
 import { UpdateSaleDto } from './dto/update-sale.dto';
@@ -19,9 +19,12 @@ export class SalesController {
   }
 
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles(ERoles.ADMIN)
+  @Roles(ERoles.ADMIN, ERoles.STUDENT)
   @Get()
-  findAll() {
+  findAll(@Req() req) {
+    if (req.user.role === undefined) {
+      return this.salesService.findAllForStudent(req.user.id);
+    }
     return this.salesService.findAll();
   }
 

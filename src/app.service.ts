@@ -8,9 +8,6 @@ export class AppService {
   }
 
   async getHello() {
-    // return this.smsService.sendSms("test", "5512708926");
-    const sms = await this.smsService.sendSms("test", "5512708926");
-            console.log("smsss => ", sms.data);
-            return {t: sms.data}
+    return "hello";
   }
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, FileTypeValidator, MaxFileSizeValidator, ParseFilePipe, Patch, Post, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, FileTypeValidator, ForbiddenException, Get, MaxFileSizeValidator, ParseFilePipe, Patch, Post, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
 import { VerificationGuard } from 'src/common/guards/verification/verification.guard';
@@ -7,6 +7,7 @@ import { diskStorage } from 'multer';
 import { v4 } from "uuid";
 import { UpdateStudenForStudenttDto } from 'src/modules/student/dto/update-student-for-student.dto';
 import { RegisterDto } from './dto/register.dto';
+import { RolesGuard } from 'src/common/guards/roles/roles.guard';
 
 @Controller({ path: 'auth', version: '1' })
 export class AuthController {
@@ -14,17 +15,15 @@ export class AuthController {
 
   @UseGuards(AuthGuard('student'))
   @Post('login')
-  async login(@Req() req, @Res({ passthrough: true }) res) {
-    const result = await this.authService.studentLogin(req.user);
-    res.cookie('token', result.accessToken, { secure: true, domain: process.env.FRONTEND_DOMAIN, httpOnly: true });
-    return result;
+  async login(@Req() req) {
+    return  this.authService.studentLogin(req.user);
   }
 
   @UseGuards(AuthGuard('admin'))
   @Post('/admin/login')
   async adminLogin(@Req() req, @Res({ passthrough: true }) res) {
     const result = await this.authService.adminLogin(req.user);
-    res.cookie('token', result.accessToken, { secure: true, domain: process.env.FRONTEND_DOMAIN, httpOnly: true });
+    res.cookie('token', result.accessToken, { /*secure: true, domain: process.env.FRONTEND_DOMAIN, httpOnly: true*/ });
     return result;
   }
 
@@ -33,14 +32,20 @@ export class AuthController {
     return this.authService.register(registerDto);
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Get('profile')
+  async getProfile(@Req() req) {
+    return this.authService.getProfile(req.user.id);
+  }
+
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Post('profile')
-  async profile(@Body() updateStudentForStudent: UpdateStudenForStudenttDto) {
+  async profile(@Body() updateStudentForStudent: UpdateStudenForStudenttDto, @Req() req) {
+    if (updateStudentForStudent.id !== req.user.id) { throw new ForbiddenException(); }
     return this.authService.updateProfile(updateStudentForStudent);
   }
 
-
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Patch('image')
   @UseInterceptors(FileInterceptor('image', {
     storage: diskStorage({
@@ -54,9 +59,7 @@ export class AuthController {
       new MaxFileSizeValidator({ maxSize: 1048576 * 100 }), // maxSize olayı byte cinsinden çalışıyor. (1048576 byte = 1 mb)
       new FileTypeValidator({ fileType: 'image\/png|image\/jpeg|image\/svg\+xml|image\/gif|image\/svg' })
     ]
-  })) image: Express.Multer.File) {
-    console.log(req.user);
-    
+  })) image: Express.Multer.File) {    
     return this.authService.updateImage(req.user, image);
   }
 
@@ -71,7 +74,7 @@ export class AuthController {
   @Post('verification')
   async verification(@Req() req: any, @Res({ passthrough: true }) res) {
     const result = await this.authService.verification(req.user, req.body.code);
-    res.cookie('token', result.accessToken, { secure: true, domain: process.env.FRONTEND_DOMAIN });
+    res.cookie('token', result.accessToken, { /*secure: true, domain: process.env.FRONTEND_DOMAIN*/ });
     return result;
   }
 

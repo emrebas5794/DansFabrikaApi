@@ -7,7 +7,6 @@ import { AdminService } from 'src/modules/admin/admin.service';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
 import { JwtService } from '@nestjs/jwt';
 import { RegisterDto } from './dto/register.dto';
-import { UpdateStudentImageDto } from 'src/modules/student/dto/update-image.dto';
 import { SmsService } from 'src/common/sms/sms.service';
 import { UpdateStudenForStudenttDto } from 'src/modules/student/dto/update-student-for-student.dto';
 
@@ -26,7 +25,6 @@ export class AuthService {
     /* ----- ADMİN ----- */
 
     async validateAdminCredentials(loginDto: LoginDto): Promise<any> {
-
         const existUser = await this.adminService.findOneForAuth(loginDto.email);
         if (!existUser) {
             throw new HttpException({ message: [EErrors.AUTH_EMAIL_PASSWORD_ERROR] }, HttpStatus.BAD_REQUEST);
@@ -40,7 +38,7 @@ export class AuthService {
     }
 
     async adminLogin(credentials: JwtPayload) {
-        return { accessToken: this.jwtService.sign(credentials, { expiresIn: '1 days' }) };
+        return { accessToken: this.jwtService.sign({ id: credentials.id, name: credentials.name, email: credentials.email, role: credentials.role, status: credentials.status }, { expiresIn: '1 days' }) };
     }
 
     /* ----- ADMİN ----- */
@@ -54,6 +52,10 @@ export class AuthService {
     */
     async studentLogin(credentials: JwtPayload) {
         return { accessToken: this.jwtService.sign({ id: credentials.id, email: credentials.email, image: credentials.image, status: credentials.status }, { expiresIn: '30 days' }) };
+    }
+
+    async getProfile(id: number) {
+        return this.studentService.findOne(id);
     }
 
     async validateStudentCredentials(loginDto: LoginDto): Promise<any> {

@@ -18,6 +18,10 @@ export class SalesService {
     return this.salesRepository.find({ relations: ['student'] });
   }
 
+  findAllForStudent(studentId: number) {
+    return this.salesRepository.find({ where: { studentId } });
+  }
+
   async findOne(id: number) {
     const sale = await this.salesRepository.findOne({ where: { id }, relations: ['student'] });
     if (sale) {

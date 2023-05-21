@@ -34,10 +34,10 @@ export class Course {
     description: string;
 
     @Column({ type: 'timestamp', precision: 3 })
-    startDate: Date | string;
+    startDate: any;
 
     @Column({ type: 'timestamp', precision: 3 })
-    endDate: Date | string;
+    endDate: any;
 
     @Column()
     courseType: number;

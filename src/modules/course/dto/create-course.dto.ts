@@ -24,11 +24,11 @@ export class CreateCourseDto {
 
     @IsDateString()
     @IsNotEmpty({ message: EErrors.START_DATE_REQUIRED })
-    readonly startDate: Date;
+    startDate: Date;
 
     @IsDateString()
     @IsNotEmpty({ message: EErrors.END_DATE_REQUIRED })
-    readonly endDate: Date;
+    endDate: Date;
 
     @IsNumber()
     @IsNotEmpty({ message: EErrors.COURSETYPE_REQUIRED })

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put, UseGuards, Req } from '@nestjs/common';
 import { AttendanceService } from './attendance.service';
 import { CreateAttendanceDto } from './dto/create-attendance.dto';
 import { UpdateAttendanceDto } from './dto/update-attendance.dto';
@@ -16,6 +16,14 @@ export class AttendanceController {
   @Post()
   create(@Body() createAttendanceDto: CreateAttendanceDto) {
     return this.attendanceService.create(createAttendanceDto);
+  }
+  
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(ERoles.STUDENT)
+  @Get()
+  findOneByStudent(@Req() req) {
+    console.log(req.user);
+    return this.attendanceService.findByStudentForStudent(req.user.id);
   }
 
   @UseGuards(AuthGuard('jwt'), RolesGuard)

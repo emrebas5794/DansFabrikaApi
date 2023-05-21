@@ -1,4 +1,6 @@
-import { PrimaryColumn, PrimaryGeneratedColumn, Column, Entity } from "typeorm";
+import { Course } from "src/modules/course/entities/course.entity";
+import { Lesson } from "src/modules/lessons/entities/lesson.entity";
+import { PrimaryColumn, PrimaryGeneratedColumn, Column, Entity, ManyToOne } from "typeorm";
 
 @Entity('attendance')
 export class Attendance {
@@ -17,4 +19,10 @@ export class Attendance {
 
     @Column()
     studentId: number;
+
+    @ManyToOne(() => Lesson, (lesson) => lesson.id)
+    lesson: Lesson;
+
+    @ManyToOne(() => Course, (course) => course.id)
+    course: Course;
 }

@@ -45,6 +45,16 @@ export class AttendanceService {
     }
   }
 
+  async findByStudentForStudent(studentId: number) {
+    const attendances = await this.attendanceRepository.find({ where: { studentId }, relations: ["lesson", "course", "course.danceType", "course.danceLevel"] });
+    if (attendances.length > 0) {
+      return attendances;
+    }
+    else {
+      throw new HttpException({ message: [EErrors.HAVENT_RECORD] }, HttpStatus.BAD_REQUEST);
+    }
+  }
+
   async update(updateAttendanceDto: UpdateAttendanceDto) {
     const lesson = await this.findOne(updateAttendanceDto.id);
     const updated = Object.assign(lesson, updateAttendanceDto);
