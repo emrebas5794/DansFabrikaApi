@@ -9,6 +9,9 @@ import { JwtService } from '@nestjs/jwt';
 import { RegisterDto } from './dto/register.dto';
 import { SmsService } from 'src/common/sms/sms.service';
 import { UpdateStudenForStudenttDto } from 'src/modules/student/dto/update-student-for-student.dto';
+import { ChangePasswordDto } from './dto/changePassword.dto';
+import { EVerificationType } from 'src/common/enums/verification-type.enum';
+import { ForgotPasswordDto, VerificationPasswordDto } from './dto/forgot-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -59,7 +62,7 @@ export class AuthService {
     }
 
     async validateStudentCredentials(loginDto: LoginDto): Promise<any> {
-        const existUser = await this.studentService.findOneForAuth(loginDto.email);
+        const existUser = await this.studentService.findOneForAuthByEmail(loginDto.email);
         if (!existUser) {
             throw new HttpException({ message: [EErrors.AUTH_EMAIL_PASSWORD_ERROR] }, HttpStatus.BAD_REQUEST);
         }
@@ -88,7 +91,7 @@ export class AuthService {
         if (student) {
             const sms = await this.smsService.sendSms(`${student.code} Dans Fabrika için onay kodunuz. `, student.phone);
             if (sms.status === HttpStatus.OK) {
-                return { accessToken: this.jwtService.sign({ phone: student.phone, type: 'register' }, { expiresIn: '2 min' }) };
+                return { accessToken: this.jwtService.sign({ phone: student.phone, type: EVerificationType.REGISTER }, { expiresIn: '2 min' }) };
             }
             else {
                 throw new HttpException({ message: [EErrors.INTERNAL_SERVER_ERROR] }, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -99,18 +102,43 @@ export class AuthService {
         }
     }
 
-    async forgotPassword() {
-        return { accessToken: this.jwtService.sign({ phone: '0555555555', type: 'forgot' }, { expiresIn: '2 min' }) };
+    async forgotPassword(forgotPasswordDto: ForgotPasswordDto) {
+        const student = await this.studentService.findOneForAuthByPhone(forgotPasswordDto.phone);
+        if (student) {
+            const sms = await this.smsService.sendSms(`${student.code} Dans Fabrika için onay kodunuz. `, student.phone);
+            
+            if (sms.status === HttpStatus.OK) {
+                return { accessToken: this.jwtService.sign({ id: student.id, phone: student.phone, type: EVerificationType.FORGOT_PASSWORD }, { expiresIn: '2 min' }) };
+            }
+            else {
+                throw new HttpException({ message: [EErrors.INTERNAL_SERVER_ERROR] }, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+        else {
+            return { accessToken: this.jwtService.sign({ id: Math.floor(1000 + Math.random() * 90000), phone: forgotPasswordDto.phone, type: EVerificationType.FORGOT_PASSWORD }, { expiresIn: '2 min' }) };
+        }
     }
 
     async verification(credentials: any, code: number) {
         const student = await this.studentService.verification(credentials.phone, code);
         if (!student) { throw new UnauthorizedException(); }
-        return { accessToken: this.jwtService.sign({ id: student.id, email: student.email, image: student.image, status: 1 }, { expiresIn: '1 days' }) };
+        return { accessToken: this.jwtService.sign({ id: student.id, email: student.email, image: student.image, status: 1 }, { expiresIn: '30 days' }) };
     }
-    
-    async passwordVerification() {
 
+    async verificationPassword(user: any, verificationPasswordDto: VerificationPasswordDto) {
+        const student = await this.studentService.verificationPassword(user.phone, verificationPasswordDto.code);
+        if (!student) { throw new UnauthorizedException(); }
+        return { accessToken: this.jwtService.sign({ id: student.id, email: student.email, image: student.image, status: 1 }, { expiresIn: '30 days' }) };
+    }
+
+    async changePassword(req: any, changePasswordDto: ChangePasswordDto) {
+        if (changePasswordDto.oldPassword !== changePasswordDto.oldPasswordAgain) {
+            throw new HttpException({ message: [EErrors.OLD_AND_NEW_DOESNT_MATCH] }, HttpStatus.BAD_REQUEST);
+        }
+
+        await this.studentService.matchPassword(req.user.id, changePasswordDto.oldPassword);
+
+        return this.studentService.updatePassword({ id: req.user.id, password: changePasswordDto.newPassword });
     }
 
     /* ----- STUDENT ----- */

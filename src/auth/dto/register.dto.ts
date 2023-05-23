@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsNotEmpty, IsString, Length } from "class-validator";
 import { EErrors } from "src/common/enums";
 
 export class RegisterDto {
@@ -16,6 +16,7 @@ export class RegisterDto {
     readonly phone: string;
 
     @IsString()
+    @Length(8, 60, { message: EErrors.PASSWORD_MIN })
     @IsNotEmpty({ message: EErrors.PASSWORD_REQUIRED })
     password: string;
     

@@ -8,6 +8,11 @@ import { v4 } from "uuid";
 import { UpdateStudenForStudenttDto } from 'src/modules/student/dto/update-student-for-student.dto';
 import { RegisterDto } from './dto/register.dto';
 import { RolesGuard } from 'src/common/guards/roles/roles.guard';
+import { Roles } from 'src/common/decorators/roles/roles.decorator';
+import { ERoles } from 'src/common/enums';
+import { ChangePasswordDto } from './dto/changePassword.dto';
+import { ForgotPasswordGuard } from 'src/common/guards/forgot-password/forgot-password.guard';
+import { ForgotPasswordDto, VerificationPasswordDto } from './dto/forgot-password.dto';
 
 @Controller({ path: 'auth', version: '1' })
 export class AuthController {
@@ -46,6 +51,7 @@ export class AuthController {
   }
 
   @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(ERoles.STUDENT)
   @Patch('image')
   @UseInterceptors(FileInterceptor('image', {
     storage: diskStorage({
@@ -63,19 +69,29 @@ export class AuthController {
     return this.authService.updateImage(req.user, image);
   }
 
-
-  @UseGuards(AuthGuard('local'))
   @Post('forgot-password')
-  async forgotPassword(@Req() req) {
-    return; 
+  async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
+    return this.authService.forgotPassword(forgotPasswordDto);
+  }
+
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(ERoles.STUDENT)
+  @Post('change-password')
+  async changePassword(@Req() req, @Body() changePasswordDto: ChangePasswordDto) {
+    return this.authService.changePassword(req, changePasswordDto); 
   }
 
   @UseGuards(VerificationGuard)
-  @Post('verification')
-  async verification(@Req() req: any, @Res({ passthrough: true }) res) {
+  @Post('verification/register')
+  async verificationRegister(@Req() req: any) {
     const result = await this.authService.verification(req.user, req.body.code);
-    res.cookie('token', result.accessToken, { /*secure: true, domain: process.env.FRONTEND_DOMAIN*/ });
     return result;
+  }
+
+  @UseGuards(ForgotPasswordGuard)
+  @Post('verification/password')
+  async verificationPassword(@Req() req: any, @Body() passwordVerificationDto: VerificationPasswordDto) {
+    return this.authService.verificationPassword(req.user, passwordVerificationDto);
   }
 
 }

@@ -69,8 +69,22 @@ export class StudentService {
     }
   }
 
-  async findOneForAuth(email) {
+  async findOneForAuthByEmail(email) {
     return this.studentRepistory.findOne({ where: { email }, select: ['id', 'name', 'image', 'password', 'email', 'status', 'code'] });
+  }
+
+  async findOneForAuthByPhone(phone) {
+    return this.studentRepistory.findOne({ where: { phone }, select: ['id', 'name', 'image', 'password', 'phone', 'email', 'status', 'code'] });
+  }
+
+  async matchPassword(userId: number, password: string) {
+    const student = await this.studentRepistory.findOne({ where: { id: userId }, select: ['id', 'name', 'image', 'password', 'email', 'status', 'code'] });
+    console.log(password, student.password, student);
+    
+    const isMatch = await bcrypt.compare(password, student.password);
+    if (!isMatch) {
+      throw new HttpException({ message: [EErrors.AUTH_EMAIL_PASSWORD_ERROR] }, HttpStatus.BAD_REQUEST);
+    }
   }
 
   async updateCode(id, code) {
@@ -116,6 +130,17 @@ export class StudentService {
     const student = await this.studentRepistory.findOne({ where: { phone } });
     if (Number(student.code) === Number(code)) {
       await this.studentRepistory.update(student.id, { status: 1 });
+      await this.updateCode(student.id, Math.floor(100000 + Math.random() * 900000));
+      return student;
+    }
+    else {
+      return false;
+    }
+  }
+
+  async verificationPassword(phone: string, code: number) {
+    const student = await this.studentRepistory.findOne({ where: { phone } });
+    if (Number(student.code) === Number(code)) {
       await this.updateCode(student.id, Math.floor(100000 + Math.random() * 900000));
       return student;
     }
