@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity('danceType')
+@Entity('dancetype')
 export class DanceType {
     @PrimaryColumn()
     @PrimaryGeneratedColumn('increment')

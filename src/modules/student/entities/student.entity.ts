@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { Notification } from "src/modules/notification/entities/notification.entity";
+import { Column, Entity, JoinColumn, ManyToMany, ManyToOne, OneToMany, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('student')
 export class Student {
@@ -50,4 +51,7 @@ export class Student {
     
     @Column()
     status: number;
+
+    @OneToMany(() => Notification, notify => notify.student)
+    notifications: Notification[]
 }

@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -14,9 +14,15 @@ import { UpdateStudentImageDto } from './dto/update-image.dto';
 import * as fs from 'fs';
 import { RegisterDto } from 'src/auth/dto/register.dto';
 import { UpdateStudenForStudenttDto } from './dto/update-student-for-student.dto';
+import { ENotificationType } from 'src/common/enums/notification.enum';
+import { NotificationService } from '../notification/notification.service';
 
 @Injectable()
 export class StudentService {
+
+  @Inject(NotificationService)
+  private readonly notificationService: NotificationService
+
   constructor(@InjectRepository(Student) private studentRepistory: Repository<Student>) { }
 
   async create(createStudentDto: CreateStudentDto | RegisterDto) {
@@ -58,6 +64,21 @@ export class StudentService {
     return new PageDto(entities, pageMetaDto);
 
   }
+
+
+  async findOneWithNotifications(id: number) {
+    const student = await this.studentRepistory.findOne({ where: { id } });
+    if (student) {
+      const notificaions = await this.notificationService.findByStudentId(student.id);
+      student.notifications = notificaions;
+      return student;
+    }
+    else {
+      throw new HttpException({ message: [EErrors.HAVENT_RECORD] }, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  // FIXME öğrenci datası çekilirken code sütunu gelmemeli
 
   async findOne(id: number) {
     const student = await this.studentRepistory.findOne({ where: { id } });

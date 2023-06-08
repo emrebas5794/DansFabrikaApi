@@ -13,10 +13,6 @@ export class UpdateAdminDto {
     @IsEmail({}, { message: EErrors.EMAIL_INVALID })
     @IsNotEmpty({ message: EErrors.EMAIL_REQUIRED })
     readonly email: string;
-
-    @Length(8, 60, { message: EErrors.PASSWORD_MIN })
-    @IsNotEmpty({ message: EErrors.PASSWORD_REQUIRED })
-    readonly password: string;
     
     @IsNumber()
     @IsNotEmpty({ message: EErrors.ROLE_REQUIRED })

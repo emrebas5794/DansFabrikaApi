@@ -8,7 +8,7 @@ import { EErrors } from 'src/common/enums';
 
 @Injectable()
 export class DanceTypeService {
-  constructor(@InjectRepository(DanceType) private danceTypeRepository: Repository<DanceType>) {}
+  constructor(@InjectRepository(DanceType) private danceTypeRepository: Repository<DanceType>) { }
 
   create(createDanceTypeDto: CreateDanceTypeDto) {
     return this.danceTypeRepository.save(createDanceTypeDto);
@@ -30,22 +30,13 @@ export class DanceTypeService {
 
   async update(updateDanceTypeDto: UpdateDanceTypeDto) {
     const danceType = await this.findOne(updateDanceTypeDto.id);
-    if (danceType) {
-      const updated = Object.assign(danceType, updateDanceTypeDto);
-      return this.danceTypeRepository.update({ id: updateDanceTypeDto.id }, updated);
-    }
-    else {
-      throw new HttpException({ message: [EErrors.HAVENT_RECORD] }, HttpStatus.BAD_REQUEST);
-    }
+    const updated = Object.assign(danceType, updateDanceTypeDto);
+    delete updated.id;
+    return this.danceTypeRepository.update({ id: updateDanceTypeDto.id }, updated);
   }
 
   async remove(id: number) {
-    const danceType = await this.findOne(id);
-    if (danceType) {
-      return this.danceTypeRepository.update(id, { status: -1 });
-    }
-    else {
-      throw new HttpException({ message: [EErrors.HAVENT_RECORD] }, HttpStatus.BAD_REQUEST);
-    }
+    await this.findOne(id);
+    return this.danceTypeRepository.update(id, { status: -1 });
   }
 }

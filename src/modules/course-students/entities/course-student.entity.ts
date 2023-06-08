@@ -1,13 +1,7 @@
-import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { ColumnNumericTransformer } from "src/common/transformers/numeric.transformer";
+import { Student } from "src/modules/student/entities/student.entity";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
-export class ColumnNumericTransformer {
-    to(data: number): number {
-        return data;
-    }
-    from(data: string | any) {
-        return parseFloat(data);
-    }
-}
 
 @Entity('coursestudents')
 export class CourseStudent {
@@ -21,10 +15,10 @@ export class CourseStudent {
     @Column()
     studentId: number;
     
-    @Column()
+    @Column({ type: 'timestamp', precision: 3 })
     startDate: Date;
 
-    @Column()
+    @Column({ type: 'timestamp', precision: 3 })
     endDate: Date;
 
     @Column({ type: 'decimal', precision: 11, scale: 2, default: 0, transformer: new ColumnNumericTransformer() })
@@ -35,4 +29,7 @@ export class CourseStudent {
 
     @Column()
     createdDate: Date;
+
+    @ManyToOne(() => Student, student => student.id)
+    student: Student
 }

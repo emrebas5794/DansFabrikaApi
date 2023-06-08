@@ -58,7 +58,7 @@ export class AuthService {
     }
 
     async getProfile(id: number) {
-        return this.studentService.findOne(id);
+        return this.studentService.findOneWithNotifications(id);
     }
 
     async validateStudentCredentials(loginDto: LoginDto): Promise<any> {
@@ -89,7 +89,7 @@ export class AuthService {
     async register(registerDto: RegisterDto) {
         const student = await this.studentService.create(registerDto);
         if (student) {
-            const sms = await this.smsService.sendSms(`${student.code} Dans Fabrika için onay kodunuz. `, student.phone);
+            const sms = await this.smsService.sendSms({ message: `${student.code} Dans Fabrika için onay kodunuz. `, phone: student.phone });
             if (sms.status === HttpStatus.OK) {
                 return { accessToken: this.jwtService.sign({ phone: student.phone, type: EVerificationType.REGISTER }, { expiresIn: '2 min' }) };
             }
@@ -105,7 +105,7 @@ export class AuthService {
     async forgotPassword(forgotPasswordDto: ForgotPasswordDto) {
         const student = await this.studentService.findOneForAuthByPhone(forgotPasswordDto.phone);
         if (student) {
-            const sms = await this.smsService.sendSms(`${student.code} Dans Fabrika için onay kodunuz. `, student.phone);
+            const sms = await this.smsService.sendSms({ message: `${student.code} Dans Fabrika için onay kodunuz. `, phone: student.phone });
             
             if (sms.status === HttpStatus.OK) {
                 return { accessToken: this.jwtService.sign({ id: student.id, phone: student.phone, type: EVerificationType.FORGOT_PASSWORD }, { expiresIn: '2 min' }) };

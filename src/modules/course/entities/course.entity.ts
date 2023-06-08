@@ -1,16 +1,9 @@
+import { ColumnNumericTransformer } from "src/common/transformers/numeric.transformer";
 import { DanceLevel } from "src/modules/dance-level/entities/dance-level.entity";
 import { DanceType } from "src/modules/dance-type/entities/dance-type.entity";
 import { Trainer } from "src/modules/trainer/entities/trainer.entity";
 import { Column, Entity, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
-export class ColumnNumericTransformer {
-    to(data: number): number {
-        return data;
-    }
-    from(data: string | any) {
-        return parseFloat(data);
-    }
-}
 
 @Entity('course')
 export class Course {

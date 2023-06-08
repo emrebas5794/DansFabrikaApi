@@ -48,6 +48,11 @@ export class CourseStudentsService {
     }
   }
 
+  async findCourseStudentsByCourse(courseId: number) {
+    const courseStudents = await this.courseStudentRepository.find({ where: { courseId }, relations: ["student"] });
+    return courseStudents;
+  }
+
   async update(updateCourseStudentDto: UpdateCourseStudentDto) {
     console.log(updateCourseStudentDto);
     const courseStudent = await this.findOne(updateCourseStudentDto.id);

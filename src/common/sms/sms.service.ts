@@ -4,6 +4,7 @@ import { AxiosError, AxiosResponse } from 'axios';
 import { Observable, catchError, firstValueFrom } from 'rxjs';
 import { EErrors } from '../enums';
 import * as FormData from 'form-data'
+import { SMS } from '../models/notification.interface';
 
 @Injectable()
 export class SmsService {
@@ -14,30 +15,26 @@ export class SmsService {
 
     constructor(private readonly http: HttpService) {}
 
-    async sendSms(message: string, phone: string): Promise<AxiosResponse> {
+    async sendSms(sms: SMS): Promise<AxiosResponse> {
         const data = new FormData();
-        data.append('data', `<SingleTextSMS>\n    <UserName>${this.username}</UserName>\n    <PassWord>${this.password}</PassWord>\n    <Action>1</Action>\n    <Mesgbody>${message}</Mesgbody>\n    <Numbers>${phone}</Numbers>\n    <Originator>${this.originator}</Originator>\n    <SDate></SDate>\n</SingleTextSMS>`);
+        data.append('data', `<SingleTextSMS>\n    <UserName>${this.username}</UserName>\n    <PassWord>${this.password}</PassWord>\n    <Action>1</Action>\n    <Mesgbody>${sms.message}</Mesgbody>\n    <Numbers>${sms.phone}</Numbers>\n    <Originator>${this.originator}</Originator>\n    <SDate></SDate>\n</SingleTextSMS>`);
         const res = await firstValueFrom(this.http.post<string>(this.smsUrl, data).pipe(catchError((error: AxiosError) => {
             throw new HttpException({ message: [EErrors.SMS_POST_ERROR, error] }, 200);
         })))
         return res;
     }
 
-    findAlls(): Observable<AxiosResponse<any>> {
-        return this.http.get('http://localhost:3100/cats').pipe(catchError(err => {
-            throw new HttpException({ message: [EErrors.HAVENT_RECORD] }, 200);
-        }));
-    }
-
-    async findAll(): Promise<any> {
-        const { data } = await firstValueFrom(
-            this.http.get<any>('http://localhost:3100/cats').pipe(
-                catchError((error: AxiosError) => {
-                    console.log(error.message);
-                    throw new HttpException({ message: [EErrors.HAVENT_RECORD] }, 200);
-                }),
-            ),
-        );
-        return data;
+    async sendBulkSms(sms: SMS[]) {
+        let sms1 = `<MultiTextSMS><UserName>${this.username}</UserName><PassWord>${this.password}</PassWord><Action>11</Action><Messages>`;
+        const sms2 = `</Messages><Originator>${this.originator}</Originator><SDate></SDate></MultiTextSMS>`;
+        sms.forEach(el => {
+            sms1 += `<Message><Mesgbody>${el.message}</Mesgbody><Number>${el.phone}</Number></Message>`;
+        })
+        const data = new FormData();
+        data.append('data', sms1 + sms2);
+        const res = await firstValueFrom(this.http.post<string>(this.smsUrl, data).pipe(catchError((error: AxiosError) => {
+            throw new HttpException({ message: [EErrors.SMS_POST_ERROR, error] }, 200);
+        })))
+        return res;
     }
 } 

@@ -15,11 +15,12 @@ export class DanceLevelService {
   }
 
   findAll() {
+    throw new HttpException({ message: [EErrors.HAVENT_RECORD] }, HttpStatus.INTERNAL_SERVER_ERROR);
     return this.danceLevelRepository.find();
   }
 
   async findOne(id: number) {
-    const danceLevel = await this.danceLevelRepository.findOne({ where: { id } });
+    const danceLevel = await this.danceLevelRepository.findOne({ where: { id } }); 
     if (danceLevel) {
       return danceLevel;
     }

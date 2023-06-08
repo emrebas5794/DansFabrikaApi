@@ -43,6 +43,6 @@ export class CreateCourseDto {
     readonly price: number;
 
     @IsNumber()
-    @IsNotEmpty({ message: EErrors.PRICE_REQUIRED })
+    @IsNotEmpty({ message: EErrors.STATUS_REQUIRED })
     readonly status: number;
 }

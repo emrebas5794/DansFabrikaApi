@@ -9,7 +9,7 @@ import { StudentModule } from './modules/student/student.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { RouterModule } from '@nestjs/core';
+import { APP_FILTER, RouterModule } from '@nestjs/core';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { DanceLevelModule } from './modules/dance-level/dance-level.module';
 import { DanceTypeModule } from './modules/dance-type/dance-type.module';
@@ -22,6 +22,9 @@ import { CourseModule } from './modules/course/course.module';
 import { SmsModule } from './common/sms/sms.module';
 import { MailModule } from './common/mail/mail.module';
 import { AuthModule } from './auth/auth.module';
+import { BillsModule } from './modules/bills/bills.module';
+import { NotificationModule } from './modules/notification/notification.module';
+import { ServerErrorFilter } from './common/filters/server-error/server-error.filter';
 
 @Module({
   imports: [
@@ -86,7 +89,9 @@ import { AuthModule } from './auth/auth.module';
     CourseModule,
     SmsModule,
     MailModule,
-    AuthModule
+    AuthModule,
+    BillsModule,
+    NotificationModule
   ],
   controllers: [AppController],
   providers: [AppService],

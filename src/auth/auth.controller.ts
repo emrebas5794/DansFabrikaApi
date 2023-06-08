@@ -26,9 +26,9 @@ export class AuthController {
 
   @UseGuards(AuthGuard('admin'))
   @Post('/admin/login')
-  async adminLogin(@Req() req, @Res({ passthrough: true }) res) {
+  async adminLogin(@Req() req) {
     const result = await this.authService.adminLogin(req.user);
-    res.cookie('token', result.accessToken, { /*secure: true, domain: process.env.FRONTEND_DOMAIN, httpOnly: true*/ });
+    // res.cookie('token', result.accessToken, { /*secure: true, domain: process.env.FRONTEND_DOMAIN, httpOnly: true*/ });
     return result;
   }
 
@@ -38,12 +38,15 @@ export class AuthController {
   }
 
   @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(ERoles.STUDENT)
   @Get('profile')
   async getProfile(@Req() req) {
+    console.log(req.user);
     return this.authService.getProfile(req.user.id);
   }
 
   @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(ERoles.STUDENT)
   @Post('profile')
   async profile(@Body() updateStudentForStudent: UpdateStudenForStudenttDto, @Req() req) {
     if (updateStudentForStudent.id !== req.user.id) { throw new ForbiddenException(); }
