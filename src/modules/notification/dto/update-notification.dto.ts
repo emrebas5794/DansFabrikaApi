@@ -17,10 +17,14 @@ export class UpdateNotificationDto {
     @IsString()
     @IsNotEmpty({ message: EErrors.MESSAGE_REQUIRED })
     readonly message: string;
-    
+
     @IsNumber()
     @IsNotEmpty({ message: EErrors.STUDENT_REQUIRED })
     readonly studentId: number;
+
+    @IsNumber()
+    @IsNotEmpty({ message: EErrors.PRIOTRY_REQUIRED })
+    readonly priotry: number;
 
     @IsNumber()
     @IsNotEmpty({ message: EErrors.STATUS_REQUIRED })

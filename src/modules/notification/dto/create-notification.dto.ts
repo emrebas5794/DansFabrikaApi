@@ -21,6 +21,10 @@ export class CreateNotificationDto {
     @IsNumber()
     @IsOptional()
     readonly status: number;
+
+    @IsNumber()
+    @IsNotEmpty({ message: EErrors.PRIOTRY_REQUIRED })
+    readonly priotry: number;
     
     @IsNumber()
     @IsOptional()

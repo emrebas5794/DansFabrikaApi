@@ -20,7 +20,13 @@ export class Notification {
     studentId: number;
 
     @Column()
+    priotry: number;
+
+    @Column()
     status: number;
+
+    @Column()
+    createdDate: Date;
 
     @ManyToOne(() => Student, student => student.id)
     student: Student

@@ -13,7 +13,7 @@ export class RegisterDto {
     
     @IsString()
     @IsNotEmpty({ message: EErrors.PHONE_REQUIRED })
-    readonly phone: string;
+    phone: string;
 
     @IsString()
     @Length(8, 60, { message: EErrors.PASSWORD_MIN })

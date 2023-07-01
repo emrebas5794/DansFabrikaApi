@@ -1,4 +1,5 @@
 import { ColumnNumericTransformer } from "src/common/transformers/numeric.transformer";
+import { Course } from "src/modules/course/entities/course.entity";
 import { Student } from "src/modules/student/entities/student.entity";
 import { Column, Entity, ManyToOne, OneToMany, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
@@ -32,4 +33,7 @@ export class CourseStudent {
 
     @ManyToOne(() => Student, student => student.id)
     student: Student
+
+    @ManyToOne(() => Course, course => course.id)
+    course: Course
 }

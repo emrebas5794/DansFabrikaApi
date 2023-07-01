@@ -15,11 +15,11 @@ export class CourseStudentsService {
   }
 
   findAll() {
-    return this.courseStudentRepository.find();
+    return this.courseStudentRepository.find({ relations: ["student", "course", "course.danceType", "course.danceLevel", "course.trainer"] });
   }
 
   async findOne(id: number) {
-    const courseStudent = await this.courseStudentRepository.findOne({ where: { id } });
+    const courseStudent = await this.courseStudentRepository.findOne({ where: { id }, relations: ["student", "course", "course.danceType", "course.danceLevel", "course.trainer"] });
     if (courseStudent) {
       return courseStudent;
     }
@@ -29,7 +29,7 @@ export class CourseStudentsService {
   }
   
   async findByStudent(studentId: number) {
-    const courseStudent = await this.courseStudentRepository.find({ where: { studentId } });
+    const courseStudent = await this.courseStudentRepository.find({ where: { studentId }, relations: ["course", "course.danceType", "course.danceLevel", "course.trainer"] });
     if (courseStudent) {
       return courseStudent;
     }
@@ -39,7 +39,7 @@ export class CourseStudentsService {
   }
   
   async findByCourse(courseId: number) {
-    const courseStudent = await this.courseStudentRepository.find({ where: { courseId } });
+    const courseStudent = await this.courseStudentRepository.find({ where: { courseId }, relations: ["student"] });
     if (courseStudent) {
       return courseStudent;
     }

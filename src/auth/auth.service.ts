@@ -12,6 +12,7 @@ import { UpdateStudenForStudenttDto } from 'src/modules/student/dto/update-stude
 import { ChangePasswordDto } from './dto/changePassword.dto';
 import { EVerificationType } from 'src/common/enums/verification-type.enum';
 import { ForgotPasswordDto, VerificationPasswordDto } from './dto/forgot-password.dto';
+import { ResetPasswordDto } from './dto/resetPassword.dto';
 
 @Injectable()
 export class AuthService {
@@ -41,7 +42,7 @@ export class AuthService {
     }
 
     async adminLogin(credentials: JwtPayload) {
-        return { accessToken: this.jwtService.sign({ id: credentials.id, name: credentials.name, email: credentials.email, role: credentials.role, status: credentials.status }, { expiresIn: '1 days' }) };
+        return { accessToken: this.jwtService.sign({ id: credentials.id, name: credentials.name, email: credentials.email, role: credentials.role, status: credentials.status }, { expiresIn: '1 days' }), exp: 86400 };
     }
 
     /* ----- ADMİN ----- */
@@ -54,7 +55,7 @@ export class AuthService {
     Yarın baktığımda anlaması kolay olsun istedim.
     */
     async studentLogin(credentials: JwtPayload) {
-        return { accessToken: this.jwtService.sign({ id: credentials.id, email: credentials.email, image: credentials.image, status: credentials.status }, { expiresIn: '30 days' }) };
+        return { accessToken: this.jwtService.sign({ id: credentials.id, email: credentials.email, image: credentials.image, status: credentials.status }, { expiresIn: '30 days' }), exp: 86400 * 30 };
     }
 
     async getProfile(id: number) {
@@ -122,13 +123,28 @@ export class AuthService {
     async verification(credentials: any, code: number) {
         const student = await this.studentService.verification(credentials.phone, code);
         if (!student) { throw new UnauthorizedException(); }
-        return { accessToken: this.jwtService.sign({ id: student.id, email: student.email, image: student.image, status: 1 }, { expiresIn: '30 days' }) };
+        return { accessToken: this.jwtService.sign({ id: student.id, email: student.email, image: student.image, status: student.status }, { expiresIn: '30 days' }), exp: 86400*30 };
     }
 
     async verificationPassword(user: any, verificationPasswordDto: VerificationPasswordDto) {
         const student = await this.studentService.verificationPassword(user.phone, verificationPasswordDto.code);
         if (!student) { throw new UnauthorizedException(); }
-        return { accessToken: this.jwtService.sign({ id: student.id, email: student.email, image: student.image, status: 1 }, { expiresIn: '30 days' }) };
+        return { accessToken: this.jwtService.sign({ id: student.id, email: student.email, image: student.image, status: student.status, type: EVerificationType.FORGOT_PASSWORD }, { expiresIn: '30 days' }), exp: 86400 * 30 };
+    }
+
+
+    async resetPassword(req: any, changePasswordDto: ResetPasswordDto) {
+
+        console.log(req.user);
+        
+
+        if (req.user.type !== 'forgot-password') { throw new UnauthorizedException(); }
+
+        if (changePasswordDto.password !== changePasswordDto.again) {
+            throw new HttpException({ message: [EErrors.OLD_AND_NEW_DOESNT_MATCH] }, HttpStatus.BAD_REQUEST);
+        }
+
+        return this.studentService.updatePassword({ id: req.user.id, password: changePasswordDto.password });
     }
 
     async changePassword(req: any, changePasswordDto: ChangePasswordDto) {

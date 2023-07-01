@@ -1,6 +1,7 @@
 import { IsNotEmpty } from "class-validator";
 import { EErrors } from "src/common/enums";
-import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { Course } from "src/modules/course/entities/course.entity";
+import { Column, Entity, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('lessons')
 export class Lesson {
@@ -25,4 +26,7 @@ export class Lesson {
 
     @Column()
     createdDate: Date;
+
+    @ManyToOne(() => Course, course => course.id)
+    course: Course
 }

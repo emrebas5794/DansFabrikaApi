@@ -15,7 +15,6 @@ export class DanceLevelService {
   }
 
   findAll() {
-    throw new HttpException({ message: [EErrors.HAVENT_RECORD] }, HttpStatus.INTERNAL_SERVER_ERROR);
     return this.danceLevelRepository.find();
   }
 

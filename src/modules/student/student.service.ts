@@ -31,6 +31,10 @@ export class StudentService {
       throw new HttpException({ message: [EErrors.EMAIL_UNIQUE] }, HttpStatus.BAD_REQUEST);
     }
 
+    createStudentDto.phone = createStudentDto.phone.replace(/[\+() ]/g, (m) => {
+      return '';
+    });
+
     const existPhone = await this.studentRepistory.findOne({ where: { phone: createStudentDto.phone } });
     if (existPhone) { // TODO burayı sor hangi alanları kontrol edelim
       throw new HttpException({ message: [EErrors.PHONE_UNIQUE] }, HttpStatus.BAD_REQUEST);
@@ -95,6 +99,11 @@ export class StudentService {
   }
 
   async findOneForAuthByPhone(phone) {
+
+    phone = phone.replace(/[\+() ]/g, (m) => {
+      return '';
+    });
+
     return this.studentRepistory.findOne({ where: { phone }, select: ['id', 'name', 'image', 'password', 'phone', 'email', 'status', 'code'] });
   }
 

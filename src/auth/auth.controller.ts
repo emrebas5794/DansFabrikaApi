@@ -13,6 +13,7 @@ import { ERoles } from 'src/common/enums';
 import { ChangePasswordDto } from './dto/changePassword.dto';
 import { ForgotPasswordGuard } from 'src/common/guards/forgot-password/forgot-password.guard';
 import { ForgotPasswordDto, VerificationPasswordDto } from './dto/forgot-password.dto';
+import { ResetPasswordDto } from './dto/resetPassword.dto';
 
 @Controller({ path: 'auth', version: '1' })
 export class AuthController {
@@ -81,7 +82,14 @@ export class AuthController {
   @Roles(ERoles.STUDENT)
   @Post('change-password')
   async changePassword(@Req() req, @Body() changePasswordDto: ChangePasswordDto) {
-    return this.authService.changePassword(req, changePasswordDto); 
+    return this.authService.changePassword(req, changePasswordDto);
+  }
+
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(ERoles.STUDENT)
+  @Post('reset-password')
+  async resetPassword(@Req() req, @Body() resetPasswordDto: ResetPasswordDto) {
+    return this.authService.resetPassword(req, resetPasswordDto);
   }
 
   @UseGuards(VerificationGuard)

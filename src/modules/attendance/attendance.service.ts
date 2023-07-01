@@ -16,7 +16,7 @@ export class AttendanceService {
   }
 
   async findOne(id: number) {
-    const attendance = await this.attendanceRepository.findOne({ where: { id } });
+    const attendance = await this.attendanceRepository.findOne({ where: { id }, relations: ["course", "student"] });
     if (attendance) {
       return attendance;
     }
@@ -26,7 +26,7 @@ export class AttendanceService {
   }
   
   async findByDate(date: any, courseId: number) {
-    const attendances = await this.attendanceRepository.find({ where: { attendanceDate: Between(startOfDay(date).toISOString(), endOfDay(date).toISOString()), courseId: courseId } });
+    const attendances = await this.attendanceRepository.find({ where: { attendanceDate: Between(startOfDay(date).toISOString(), endOfDay(date).toISOString()), courseId: courseId }, relations: ["course", "student"] });
     if (attendances.length > 0) {
       return attendances;
     }
@@ -36,7 +36,7 @@ export class AttendanceService {
   }
   
   async findByStudent(student: number, courseId: number) {
-    const attendances = await this.attendanceRepository.find({ where: { studentId: student, courseId: courseId } });
+    const attendances = await this.attendanceRepository.find({ where: { studentId: student, courseId: courseId }, relations: ["course", "student"] });
     if (attendances.length > 0) {
       return attendances;
     }

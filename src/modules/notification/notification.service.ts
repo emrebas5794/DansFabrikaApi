@@ -126,7 +126,7 @@ export class NotificationService {
       students.forEach((student) => {
         wheres.push({ studentId: student.studentId });
       });
-      return this.notificationRepository.find({ where: wheres });
+      return this.notificationRepository.find({ where: wheres, relations: ['student'] });
     }
     else {
       throw new HttpException({ message: [EErrors.HAVENT_RECORD] }, HttpStatus.BAD_REQUEST);
@@ -136,7 +136,9 @@ export class NotificationService {
   async setStatus(userId, notificationId) {
     console.log(userId, notificationId);
     
-    const notification = await this.notificationRepository.findOne({ where: { studentId: userId, id: notificationId } });
+    const notification = await this.notificationRepository.findOne({ where: [{ studentId: userId, id: notificationId }, { studentId: null, id: notificationId }] });
+    console.log(notification);
+    
     if (notification) {
       notification.status = ENotificationStatus.READED;
       return this.notificationRepository.update(notification.id, notification);
