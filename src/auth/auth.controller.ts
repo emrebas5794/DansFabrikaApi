@@ -14,6 +14,7 @@ import { ChangePasswordDto } from './dto/changePassword.dto';
 import { ForgotPasswordGuard } from 'src/common/guards/forgot-password/forgot-password.guard';
 import { ForgotPasswordDto, VerificationPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/resetPassword.dto';
+import { InviteDto } from './dto/invite-friend.dto';
 
 @Controller({ path: 'auth', version: '1' })
 export class AuthController {
@@ -36,6 +37,13 @@ export class AuthController {
   @Post('register')
   async register(@Body() registerDto: RegisterDto) {
     return this.authService.register(registerDto);
+  }
+
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(ERoles.STUDENT)
+  @Post('invite')
+  async inviteFriend(@Body() invitedDto: InviteDto, @Req() req) {
+    return this.authService.inviteFriend(invitedDto, req.user);
   }
 
   @UseGuards(AuthGuard('jwt'), RolesGuard)

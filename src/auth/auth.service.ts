@@ -13,6 +13,8 @@ import { ChangePasswordDto } from './dto/changePassword.dto';
 import { EVerificationType } from 'src/common/enums/verification-type.enum';
 import { ForgotPasswordDto, VerificationPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/resetPassword.dto';
+import { InviteDto } from './dto/invite-friend.dto';
+import { MailService } from 'src/common/mail/mail.service';
 
 @Injectable()
 export class AuthService {
@@ -22,7 +24,7 @@ export class AuthService {
     @Inject(StudentService)
     private readonly studentService: StudentService
 
-    constructor(private jwtService: JwtService, private smsService: SmsService) {
+    constructor(private jwtService: JwtService, private smsService: SmsService, private emailService: MailService) {
 
     }
 
@@ -87,6 +89,12 @@ export class AuthService {
         return this.studentService.updateForStudent(updateStudentDto);
     }
 
+    async inviteFriend(inviteDto: InviteDto, user) {
+        const student = await this.studentService.findOne(user.id);
+        
+        return this.emailService.sendMail({ email: inviteDto.email, message: `Davet kodunuz: ${student.reference}`, title: "DansFabrika Davet" })
+    }
+
     async register(registerDto: RegisterDto) {
         const student = await this.studentService.create(registerDto);
         if (student) {
@@ -134,10 +142,6 @@ export class AuthService {
 
 
     async resetPassword(req: any, changePasswordDto: ResetPasswordDto) {
-
-        console.log(req.user);
-        
-
         if (req.user.type !== 'forgot-password') { throw new UnauthorizedException(); }
 
         if (changePasswordDto.password !== changePasswordDto.again) {

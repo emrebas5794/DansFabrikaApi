@@ -40,10 +40,18 @@ export class StudentService {
       throw new HttpException({ message: [EErrors.PHONE_UNIQUE] }, HttpStatus.BAD_REQUEST);
     }
 
+
+    const referenceUser = await this.studentRepistory.findOne({ where: { reference: createStudentDto.reference } });
+
     createStudentDto.code = Math.floor(100000 + Math.random() * 900000);
     createStudentDto.reference = Math.floor(100000 + Math.random() * 900000);
     createStudentDto.password = await bcrypt.hash(createStudentDto.password, 10);
-    return this.studentRepistory.save(createStudentDto);
+    const student = await this.studentRepistory.save(createStudentDto);
+    
+    if (referenceUser) {
+      this.studentRepistory.update(student, { referenceId: referenceUser.id });
+    }
+    return student;
   }
 
   async findAll(pageOptionsDto: PageOptionsDto): Promise<PageDto<Student>> {
@@ -75,6 +83,7 @@ export class StudentService {
     if (student) {
       const notificaions = await this.notificationService.findByStudentId(student.id);
       student.notifications = notificaions;
+      delete student.code;
       return student;
     }
     else {
@@ -109,8 +118,7 @@ export class StudentService {
 
   async matchPassword(userId: number, password: string) {
     const student = await this.studentRepistory.findOne({ where: { id: userId }, select: ['id', 'name', 'image', 'password', 'email', 'status', 'code'] });
-    console.log(password, student.password, student);
-    
+
     const isMatch = await bcrypt.compare(password, student.password);
     if (!isMatch) {
       throw new HttpException({ message: [EErrors.AUTH_EMAIL_PASSWORD_ERROR] }, HttpStatus.BAD_REQUEST);
@@ -129,7 +137,6 @@ export class StudentService {
   async update(updateStudentDto: UpdateStudentDto) {
     const student = await this.findOne(updateStudentDto.id);
     // const updated = Object.assign(student, updateStudentDto);
-    // console.log(updateStudentDto);
     // Object.keys
     return await this.studentRepistory.update(student.id, updateStudentDto);
   }
@@ -161,6 +168,7 @@ export class StudentService {
     if (Number(student.code) === Number(code)) {
       await this.studentRepistory.update(student.id, { status: 1 });
       await this.updateCode(student.id, Math.floor(100000 + Math.random() * 900000));
+      student.status = 1;
       return student;
     }
     else {

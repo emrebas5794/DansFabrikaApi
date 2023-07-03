@@ -4,7 +4,7 @@ import { UpdateSliderDto } from './dto/update-slider.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Slider } from './entities/slider.entity';
 import { Repository } from 'typeorm';
-import { EErrors } from 'src/common/enums';
+import { EErrors, EStatus } from 'src/common/enums';
 import * as fs from 'fs';
 import { UpdateSliderImageDto } from './dto/update-slider-image.dto';
 
@@ -18,6 +18,10 @@ export class SliderService {
 
   findAll() {
     return this.sliderRepository.find();
+  }
+
+  findAllForStudent() {
+    return this.sliderRepository.find({ where: { status: EStatus.ACTIVE }, order: { queue: 'ASC' } });
   }
 
   async findOne(id: number) {

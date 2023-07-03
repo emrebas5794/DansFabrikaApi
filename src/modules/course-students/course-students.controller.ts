@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put, UseGuards, Req } from '@nestjs/common';
 import { CourseStudentsService } from './course-students.service';
 import { CreateCourseStudentDto } from './dto/create-course-student.dto';
 import { UpdateCourseStudentDto } from './dto/update-course-student.dto';
@@ -21,7 +21,10 @@ export class CourseStudentsController {
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(ERoles.ADMIN)
   @Get()
-  findAll() {
+  findAll(@Req() req) {
+    if (req.user.role === undefined) {
+      return this.courseStudentsService.findAllForStudent();
+    }
     return this.courseStudentsService.findAll();
   }
 

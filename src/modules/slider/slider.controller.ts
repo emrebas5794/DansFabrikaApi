@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator, Put, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator, Put, UseGuards, Req } from '@nestjs/common';
 import { SliderService } from './slider.service';
 import { CreateSliderDto } from './dto/create-slider.dto';
 import { UpdateSliderDto } from './dto/update-slider.dto';
@@ -23,9 +23,12 @@ export class SliderController {
   }
 
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles(ERoles.ADMIN)
+  @Roles(ERoles.ADMIN, ERoles.STUDENT)
   @Get()
-  findAll() {
+  findAll(@Req() req) {
+    if (req.user.role === undefined) {
+      return this.sliderService.findAllForStudent();
+    }
     return this.sliderService.findAll();
   } 
 

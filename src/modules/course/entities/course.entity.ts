@@ -1,8 +1,9 @@
 import { ColumnNumericTransformer } from "src/common/transformers/numeric.transformer";
 import { DanceLevel } from "src/modules/dance-level/entities/dance-level.entity";
 import { DanceType } from "src/modules/dance-type/entities/dance-type.entity";
+import { Lesson } from "src/modules/lessons/entities/lesson.entity";
 import { Trainer } from "src/modules/trainer/entities/trainer.entity";
-import { Column, Entity, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
 
 @Entity('course')
@@ -58,5 +59,8 @@ export class Course {
 
     @ManyToOne(() => DanceLevel, (danceLevel) => danceLevel.id)
     danceLevel: Trainer
+
+    @OneToMany(() => Lesson, (lesson) => lesson.course)
+    lesson: Lesson[]
 
 }

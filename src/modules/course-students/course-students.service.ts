@@ -18,6 +18,8 @@ export class CourseStudentsService {
     return this.courseStudentRepository.find({ relations: ["student", "course", "course.danceType", "course.danceLevel", "course.trainer"] });
   }
 
+  async findAllForStudent() { }
+
   async findOne(id: number) {
     const courseStudent = await this.courseStudentRepository.findOne({ where: { id }, relations: ["student", "course", "course.danceType", "course.danceLevel", "course.trainer"] });
     if (courseStudent) {
@@ -27,9 +29,19 @@ export class CourseStudentsService {
       throw new HttpException({ message: [EErrors.HAVENT_RECORD] }, HttpStatus.BAD_REQUEST);
     }
   }
-  
+
   async findByStudent(studentId: number) {
     const courseStudent = await this.courseStudentRepository.find({ where: { studentId }, relations: ["course", "course.danceType", "course.danceLevel", "course.trainer"] });
+    if (courseStudent) {
+      return courseStudent;
+    }
+    else {
+      throw new HttpException({ message: [EErrors.HAVENT_RECORD] }, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async findByStudentAndCourse(studentId: number, courseId: number) {
+    const courseStudent = await this.courseStudentRepository.find({ where: { studentId, courseId }, relations: ["course", "course.danceType", "course.danceLevel", "course.trainer"] });
     if (courseStudent) {
       return courseStudent;
     }

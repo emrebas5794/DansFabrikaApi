@@ -12,9 +12,12 @@ export class AttendanceController {
   constructor(private readonly attendanceService: AttendanceService) {}
 
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles(ERoles.ADMIN)
+  @Roles(ERoles.ADMIN, ERoles.STUDENT)
   @Post()
-  create(@Body() createAttendanceDto: CreateAttendanceDto) {
+  create(@Body() createAttendanceDto: CreateAttendanceDto, @Req() req) {
+    if (req.user.role === undefined) {
+      return this.attendanceService.createForStudent(req.user.id, createAttendanceDto);
+    }
     return this.attendanceService.create(createAttendanceDto);
   }
   
@@ -22,7 +25,6 @@ export class AttendanceController {
   @Roles(ERoles.STUDENT)
   @Get()
   findOneByStudent(@Req() req) {
-    console.log(req.user);
     return this.attendanceService.findByStudentForStudent(req.user.id);
   }
 
