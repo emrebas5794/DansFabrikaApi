@@ -21,7 +21,7 @@ export class CourseService {
   }
 
   async findAllForStudent() {
-    const courses = await this.courseRepository.find({ where: [ { courseType: ECourseTypes.KIDS, status: EStatus.ACTIVE }, { courseType: ECourseTypes.ACADEMY, status: EStatus.ACTIVE } ], relations: ["danceType", "danceLevel", "trainer", "lesson"] });
+    const courses = await this.courseRepository.find({ where: { status: EStatus.ACTIVE }, relations: ["danceType", "danceLevel", "trainer", "lesson"] });
     if (courses.length > 0) {
       return courses;
     }
@@ -30,8 +30,8 @@ export class CourseService {
     }
   }
 
-  async findAllForWorkShop(date: Date) {    
-    const courses = await this.courseRepository.find({ where: { startDate: Between(startOfDay(date).toISOString(), endOfDay(date).toISOString()) }, relations: ["danceType", "danceLevel", "trainer", "lesson"] });
+  async findAllForWorkShop(day: number) {    
+    const courses = await this.courseRepository.find({ where: { lesson: { day } }, relations: ["danceType", "danceLevel", "trainer", "lesson"] });
     if (courses.length > 0) {
       return courses;
     }

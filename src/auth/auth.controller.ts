@@ -23,7 +23,7 @@ export class AuthController {
   @UseGuards(AuthGuard('student'))
   @Post('login')
   async login(@Req() req) {
-    return  this.authService.studentLogin(req.user);
+    return this.authService.studentLogin(req.user);
   }
 
   @UseGuards(AuthGuard('admin'))
@@ -77,7 +77,7 @@ export class AuthController {
       new MaxFileSizeValidator({ maxSize: 1048576 * 100 }), // maxSize olayı byte cinsinden çalışıyor. (1048576 byte = 1 mb)
       new FileTypeValidator({ fileType: 'image\/png|image\/jpeg|image\/svg\+xml|image\/gif|image\/svg' })
     ]
-  })) image: Express.Multer.File) {    
+  })) image: Express.Multer.File) {
     return this.authService.updateImage(req.user, image);
   }
 

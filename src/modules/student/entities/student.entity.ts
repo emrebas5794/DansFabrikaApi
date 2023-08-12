@@ -48,9 +48,12 @@ export class Student {
     
     @Column()
     code: number;
-    
+
     @Column()
     status: number;
+
+    @Column()
+    createdDate: Date;
 
     @OneToMany(() => Notification, notify => notify.student)
     notifications: Notification[]

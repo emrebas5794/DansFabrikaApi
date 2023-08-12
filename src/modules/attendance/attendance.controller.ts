@@ -6,6 +6,8 @@ import { AuthGuard } from '@nestjs/passport';
 import { Roles } from 'src/common/decorators/roles/roles.decorator';
 import { ERoles } from 'src/common/enums';
 import { RolesGuard } from 'src/common/guards/roles/roles.guard';
+import { CreateQrDto } from './dto/create-qr.dto';
+import { CreateAttendanceForStudentDto } from './dto/create-attendance-student.dto';
 
 @Controller({ path: 'attendance', version: '1' })
 export class AttendanceController {
@@ -14,13 +16,21 @@ export class AttendanceController {
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(ERoles.ADMIN, ERoles.STUDENT)
   @Post()
-  create(@Body() createAttendanceDto: CreateAttendanceDto, @Req() req) {
+  create(@Body() createAttendanceDto: CreateAttendanceDto | CreateAttendanceForStudentDto, @Req() req) {
     if (req.user.role === undefined) {
-      return this.attendanceService.createForStudent(req.user.id, createAttendanceDto);
+      return this.attendanceService.createForStudent(req.user.id, createAttendanceDto as CreateAttendanceForStudentDto);
     }
-    return this.attendanceService.create(createAttendanceDto);
+    return this.attendanceService.create(createAttendanceDto as CreateAttendanceDto);
   }
-  
+
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(ERoles.ADMIN)
+  @Post('qr')
+  createQr(@Body() dto: CreateQrDto) {
+    return this.attendanceService.createQr(dto);
+  }
+
+
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(ERoles.STUDENT)
   @Get()

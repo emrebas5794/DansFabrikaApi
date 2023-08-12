@@ -30,10 +30,9 @@ export class CourseController {
   
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(ERoles.STUDENT, ERoles.ADMIN)
-  @Get('workshop/:date')
-  findAllForWorkShop(@Param('date') date: string) {
-    const formattedDate: Date = new Date(date);
-    return this.courseService.findAllForWorkShop(formattedDate);
+  @Get('workshop/:day')
+  findAllForWorkShop(@Param('day') day: number) {
+    return this.courseService.findAllForWorkShop(day);
   }
 
   @UseGuards(AuthGuard('jwt'), RolesGuard)

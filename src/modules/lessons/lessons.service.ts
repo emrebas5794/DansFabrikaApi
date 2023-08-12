@@ -15,11 +15,11 @@ export class LessonsService {
   }
 
   findAll() {
-    return this.lessonRepository.find({ relations: ["course"] });
+    return this.lessonRepository.find({ relations: ["course", "course.danceType", "course.danceLevel", "course.trainer"] });
   }
 
   async findOne(id: number) {
-    const lesson = await this.lessonRepository.findOne({ where: { id }, relations: ["course"] });
+    const lesson = await this.lessonRepository.findOne({ where: { id }, relations: ["course", "course.danceType", "course.danceLevel", "course.trainer"] });
     if (lesson) {
       return lesson;
     }

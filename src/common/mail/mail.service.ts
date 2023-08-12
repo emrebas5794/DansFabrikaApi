@@ -10,11 +10,7 @@ export class MailService {
         await this.mailerService.sendMail({
             to: data.email,
             subject: data.title,
-            template: './2fa',
-            context: {
-                name: data.message,
-                code: data.message
-            }
+            html: data.message
         });
     }
 
@@ -22,10 +18,54 @@ export class MailService {
         await this.mailerService.sendMail({
             bcc: data.emails,
             subject: data.title,
-            template: './2fa',
+            html: data.message
+        });
+    }
+
+    async sendRegister(user) {
+        await this.mailerService.sendMail({
+            to: user.email,
+            subject: "Hoş Geldiniz",
+            template: './register',
             context: {
-                name: data.message,
-                code: data.message
+                name: user.name
+            }
+        });
+    }
+
+    async sendReference(user, email) {
+        await this.mailerService.sendMail({
+            to: email,
+            subject: "Hoş Geldiniz",
+            template: './package-sale',
+            context: {
+                code: user.reference,
+            }
+        });
+    }
+
+    async sendPackageSale(user, pck) {
+        await this.mailerService.sendMail({
+            to: user.email,
+            subject: "Hoş Geldiniz",
+            template: './package-sale',
+            context: {
+                name: user.name,
+                packageName: pck.name,
+                packageDetail: pck.detail,
+                packageDate: new Date(pck.sellBy).toLocaleDateString()
+            }
+        });
+    }
+
+
+    async sendUsedCredit(user) {
+        await this.mailerService.sendMail({
+            to: user.email,
+            subject: "Hoş Geldiniz",
+            template: './used-credit',
+            context: {
+                name: user.name
             }
         });
     }

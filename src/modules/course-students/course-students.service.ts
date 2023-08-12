@@ -18,7 +18,9 @@ export class CourseStudentsService {
     return this.courseStudentRepository.find({ relations: ["student", "course", "course.danceType", "course.danceLevel", "course.trainer"] });
   }
 
-  async findAllForStudent() { }
+  async findAllForStudent(user: any) {
+    return this.courseStudentRepository.find({ where: { studentId: user.id }, relations: ["course", "course.danceType", "course.danceLevel", "course.trainer", "course.lesson"] });
+  }
 
   async findOne(id: number) {
     const courseStudent = await this.courseStudentRepository.findOne({ where: { id }, relations: ["student", "course", "course.danceType", "course.danceLevel", "course.trainer"] });

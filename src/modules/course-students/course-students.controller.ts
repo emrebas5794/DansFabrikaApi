@@ -19,11 +19,11 @@ export class CourseStudentsController {
   }
 
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles(ERoles.ADMIN)
+  @Roles(ERoles.ADMIN, ERoles.STUDENT)
   @Get()
   findAll(@Req() req) {
     if (req.user.role === undefined) {
-      return this.courseStudentsService.findAllForStudent();
+      return this.courseStudentsService.findAllForStudent(req.user);
     }
     return this.courseStudentsService.findAll();
   }

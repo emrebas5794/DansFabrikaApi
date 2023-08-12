@@ -25,6 +25,8 @@ import { AuthModule } from './auth/auth.module';
 import { BillsModule } from './modules/bills/bills.module';
 import { NotificationModule } from './modules/notification/notification.module';
 import { ServerErrorFilter } from './common/filters/server-error/server-error.filter';
+import { SystemModule } from './modules/system/system.module';
+import { SipayModule } from './modules/sipay/sipay.module';
 
 @Module({
   imports: [
@@ -91,7 +93,9 @@ import { ServerErrorFilter } from './common/filters/server-error/server-error.fi
     MailModule,
     AuthModule,
     BillsModule,
-    NotificationModule
+    NotificationModule,
+    SystemModule,
+    SipayModule
   ],
   controllers: [AppController],
   providers: [AppService],

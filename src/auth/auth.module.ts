@@ -28,6 +28,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     SmsModule
   ],
   controllers: [AuthController],
-  providers: [AuthService, StudentStrategy, AdminStrategy, JwtStrategy]
+  providers: [AuthService, StudentStrategy, AdminStrategy, JwtStrategy],
+  exports: [AuthService]
 })
 export class AuthModule {}

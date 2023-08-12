@@ -9,6 +9,7 @@ import { Package } from './entities/package.entity';
     TypeOrmModule.forFeature([Package])
   ],
   controllers: [PackagesController],
-  providers: [PackagesService, TypeOrmModule]
+  providers: [PackagesService, TypeOrmModule],
+  exports: [PackagesService]
 })
 export class PackagesModule {}

@@ -6,14 +6,18 @@ import { Attendance } from './entities/attendance.entity';
 import { Between, Equal, LessThanOrEqual, Repository } from 'typeorm';
 import { EErrors } from 'src/common/enums';
 import { endOfDay, startOfDay } from 'date-fns';
-import { groupBy } from 'rxjs';
-import { CourseService } from '../course/course.service';
 import { CourseStudentsService } from '../course-students/course-students.service';
+import { CreateQrDto } from './dto/create-qr.dto';
+import { CreateAttendanceForStudentDto } from './dto/create-attendance-student.dto';
+import { AuthService } from 'src/auth/auth.service';
 
 @Injectable()
 export class AttendanceService {
   @Inject(CourseStudentsService)
   private readonly courseStudentService: CourseStudentsService
+
+  @Inject(AuthService)
+  private readonly authService: AuthService
   
   constructor(@InjectRepository(Attendance) private attendanceRepository: Repository<Attendance>) {}
 
@@ -21,11 +25,20 @@ export class AttendanceService {
     return this.attendanceRepository.save(createAttendanceDto);
   }
 
-  async createForStudent(studentId: number, createAttendanceDto: CreateAttendanceDto) {
-    if (studentId !== createAttendanceDto.studentId) { throw new ForbiddenException(); }
-    const courses = await this.courseStudentService.findByStudentAndCourse(studentId, createAttendanceDto.courseId);
+  async createQr(dto: CreateQrDto) {
+    return this.authService.createJwt(dto);
+  }
+
+  async createForStudent(studentId: number, createAttendanceDto: CreateAttendanceForStudentDto) {
+    const data = await this.authService.validateJwt(createAttendanceDto.qr);    
+    const courses = await this.courseStudentService.findByStudentAndCourse(studentId, data.courseId);
     if (courses.length > 0) {
-      return this.attendanceRepository.save(createAttendanceDto);
+      return this.attendanceRepository.save({
+        attendanceDate: data.attendanceDate,
+        courseId: data.courseId,
+        lesson: data.lessonId,
+        studentId: studentId
+      });
     }
     else {
       throw new HttpException({ message: [EErrors.NO_COURSE_RECORD] }, HttpStatus.BAD_REQUEST);

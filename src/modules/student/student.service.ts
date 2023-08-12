@@ -49,7 +49,9 @@ export class StudentService {
     const student = await this.studentRepistory.save(createStudentDto);
     
     if (referenceUser) {
-      this.studentRepistory.update(student, { referenceId: referenceUser.id });
+      referenceUser.credit += 1000;
+      await this.studentRepistory.update(referenceUser, { credit: referenceUser.credit });
+      await this.studentRepistory.update(student, { referenceId: referenceUser.id });
     }
     return student;
   }
@@ -139,6 +141,18 @@ export class StudentService {
     // const updated = Object.assign(student, updateStudentDto);
     // Object.keys
     return await this.studentRepistory.update(student.id, updateStudentDto);
+  }
+
+  async updateCredit(studentId: number, credit: number) {
+    const student = await this.findOne(studentId);
+    student.credit += credit;
+    return this.studentRepistory.update(student.id, student);
+  }
+
+  async updateScore(studentId: number, amount: number) {
+    const student = await this.findOne(studentId);
+    student.score += amount;
+    return this.studentRepistory.update(student.id, student);
   }
 
   async updateForStudent(updateStudentForStudent: UpdateStudenForStudenttDto) {

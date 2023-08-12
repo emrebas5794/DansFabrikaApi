@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber } from "class-validator";
+import { IsNotEmpty, IsNumber, IsOptional } from "class-validator";
 import { EErrors } from "src/common/enums";
 
 export class UpdateSaleDto {
@@ -13,6 +13,10 @@ export class UpdateSaleDto {
     @IsNumber()
     @IsNotEmpty({ message: EErrors.CREDIT_REQUIRED })
     readonly credit: number;
+
+    @IsNumber()
+    @IsOptional()
+    readonly packagesId: number;
 
     @IsNumber()
     @IsNotEmpty({ message: EErrors.PRICE_REQUIRED })

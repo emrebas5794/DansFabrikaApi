@@ -10,10 +10,34 @@ async function bootstrap() {
   app.enableVersioning({
     type: VersioningType.URI
   });  
+  // app.use((req, res, next) => {
+  //   res.header('Access-Control-Allow-Origin', '*');
+  //   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  //   res.header('Access-Control-Allow-Headers', 'Content-Type, Accept');
+  //   next();
+  // });
+  // app.enableCors({
+  //   allowedHeaders: '*',
+  //   origin: '*',
+  // });
+  
   app.enableCors({
-    credentials: true,
-    origin: process.env.FRONTEND_URL
-    // origin: "*"
+    origin: [
+      'http://localhost',
+      'https://localhost',
+      'http://localhost:8100',
+      'https://localhost:8100',
+      'http://dansfabrika.com',
+      'https://dansfabrika.com',
+      'http://admin.dansfabrika.com',
+      'https://admin.dansfabrika.com',
+      'http://payment.dansfabrika.com',
+      'https://payment.dansfabrika.com',
+      'http://*.dansfabrika.com',
+      'https://*.dansfabrika.com',
+      'capacitor://localhost'
+    ],
+    credentials: true
   });
   app.useGlobalPipes(new ValidationPipe({ stopAtFirstError: true }));
   await app.listen(3000);

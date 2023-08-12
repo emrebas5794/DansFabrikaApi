@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ForbiddenException, HttpException, HttpStatus, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { EErrors } from 'src/common/enums';
 import * as bcrypt from 'bcrypt';
 import { LoginDto } from './dto/login.dto';
@@ -50,7 +50,6 @@ export class AuthService {
     /* ----- ADMİN ----- */
 
 
-
     /* ----- STUDENT ----- */
 
     /* Admin Login ile Student Login birebir aynı fonksiyondur. Ayrı ayrı kullanmamın amacı ilerideki yapılıcak değişiklikler içindir
@@ -81,6 +80,18 @@ export class AuthService {
         return existUser ?? null;
     }
 
+    createJwt(dto: any) {
+        return { qr: this.jwtService.sign({ attendanceDate: dto.attendanceDate, courseId: dto.courseId, lessonId: dto.lessonId }, { expiresIn: '2 hours' }), exp: 7200 };
+    }
+
+    async validateJwt(token) {
+        try {
+            return this.jwtService.verify(token);
+        } catch (error) {
+            throw new ForbiddenException()
+        }
+    }
+
     async updateImage(user: any, file: Express.Multer.File) {
         return this.studentService.updateImage(user, file);
     }
@@ -90,9 +101,8 @@ export class AuthService {
     }
 
     async inviteFriend(inviteDto: InviteDto, user) {
-        const student = await this.studentService.findOne(user.id);
-        
-        return this.emailService.sendMail({ email: inviteDto.email, message: `Davet kodunuz: ${student.reference}`, title: "DansFabrika Davet" })
+        const student = await this.studentService.findOne(user.id);        
+        return this.emailService.sendReference(student, inviteDto.email);
     }
 
     async register(registerDto: RegisterDto) {
@@ -131,6 +141,7 @@ export class AuthService {
     async verification(credentials: any, code: number) {
         const student = await this.studentService.verification(credentials.phone, code);
         if (!student) { throw new UnauthorizedException(); }
+        this.emailService.sendRegister(student);
         return { accessToken: this.jwtService.sign({ id: student.id, email: student.email, image: student.image, status: student.status }, { expiresIn: '30 days' }), exp: 86400*30 };
     }
 
