@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import * as cookieParser from 'cookie-parser';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -40,6 +41,7 @@ async function bootstrap() {
     credentials: true
   });
   app.useGlobalPipes(new ValidationPipe({ stopAtFirstError: true }));
+  app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
   await app.listen(3000);
 }
 bootstrap();

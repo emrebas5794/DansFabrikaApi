@@ -6,7 +6,10 @@ import { Admin } from './entities/admin.entity';
 import { Repository } from 'typeorm';
 import { EErrors } from 'src/common/enums';
 import { UpdatePasswordDto } from './dto/update-password.dto';
-import * as bcrypt from 'bcrypt';
+
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const password = require("node-php-password");
 
 @Injectable()
 export class AdminService {
@@ -48,7 +51,7 @@ export class AdminService {
 
   async updatePassword(updatePasswordDto: UpdatePasswordDto) {
     await this.findOne(updatePasswordDto.id);
-    updatePasswordDto.password = await bcrypt.hash(updatePasswordDto.password, 10);
+    updatePasswordDto.password = password.hash(updatePasswordDto.password);
     return this.adminRepository.update(updatePasswordDto.id, { password: updatePasswordDto.password });
   }
 

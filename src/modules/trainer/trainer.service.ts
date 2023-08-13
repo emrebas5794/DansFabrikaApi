@@ -5,10 +5,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Trainer } from './entities/trainer.entity';
 import { Repository } from 'typeorm';
 import { EErrors } from 'src/common/enums';
-import * as bcrypt from 'bcrypt';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { UpdateTrainerImageDto } from './dto/update-image.dto';
 import * as fs from 'fs';
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const password = require("node-php-password");
 
 @Injectable()
 export class TrainerService {
@@ -19,7 +21,7 @@ export class TrainerService {
     if (exisEmail) {
       throw new HttpException({ message: [EErrors.EMAIL_UNIQUE] }, HttpStatus.BAD_REQUEST);
     }
-    createTrainerDto.password = await bcrypt.hash(createTrainerDto.password, 10);
+    createTrainerDto.password = password.hash(createTrainerDto.password);
     return this.trainerRepository.save(createTrainerDto);
   }
 
@@ -46,7 +48,7 @@ export class TrainerService {
 
   async updatePassword(updatePasswordDto: UpdatePasswordDto) {
     await this.findOne(updatePasswordDto.id);
-    updatePasswordDto.password = await bcrypt.hash(updatePasswordDto.password, 10);
+    updatePasswordDto.password = password.hash(updatePasswordDto.password);
     return this.trainerRepository.update(updatePasswordDto.id, { password: updatePasswordDto.password });
   }
 
@@ -54,7 +56,7 @@ export class TrainerService {
     const trainer = await this.findOne(updateTrainerImageDto.id);
     if (trainer.image) {
       fs.unlink(`${process.env.IMAGES_URL}${trainer.image}`, (err) => {
-        console.log(err); // Log sistemi kurulunca buraya da bak
+        console.log(err); // Log sistemi kurulunca buraya da bak 
       })
     }
     return this.trainerRepository.update(updateTrainerImageDto.id, { image: file.filename });

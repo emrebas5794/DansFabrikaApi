@@ -27,6 +27,9 @@ import { NotificationModule } from './modules/notification/notification.module';
 import { ServerErrorFilter } from './common/filters/server-error/server-error.filter';
 import { SystemModule } from './modules/system/system.module';
 import { SipayModule } from './modules/sipay/sipay.module';
+import { WinstonModule } from 'nest-winston';
+import * as winston from 'winston';
+import * as path from 'path';
 
 @Module({
   imports: [
@@ -80,6 +83,35 @@ import { SipayModule } from './modules/sipay/sipay.module';
           limit: Number(config.get('THROTTLER_LIMIT'))
         }
       }
+    }),
+    WinstonModule.forRoot({
+      format: winston.format.combine(
+        winston.format.timestamp(),
+        winston.format.json(),
+      ),
+      transports: [
+        new winston.transports.File({
+          dirname: path.join(__dirname, './../log/debug/'),
+          filename: 'debug.log',
+          level: 'debug',
+          maxFiles: 10,
+          maxsize: 10000000
+        }),
+        new winston.transports.File({
+          dirname: path.join(__dirname, './../log/error/'), 
+          filename: 'error.log',
+          level: 'error',
+          maxFiles: 10,
+          maxsize: 10000000
+        }),
+        new winston.transports.File({
+          dirname: path.join(__dirname, './../log/info/'),
+          filename: 'info.log',
+          level: 'info',
+          maxFiles: 10,
+          maxsize: 10000000
+        }),
+      ],
     }),
     DanceLevelModule,
     DanceTypeModule,

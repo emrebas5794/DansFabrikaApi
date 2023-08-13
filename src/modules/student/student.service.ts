@@ -5,7 +5,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Student } from './entities/student.entity';
 import { Repository } from 'typeorm';
 import { EErrors } from 'src/common/enums';
-import * as bcrypt from 'bcrypt';
 import { PageOptionsDto, VerifyOrderData } from '../pagination/page-options.dto';
 import { PageDto } from '../pagination/page.dto';
 import { PageMetaDto } from '../pagination/page-meta.dto';
@@ -16,6 +15,10 @@ import { RegisterDto } from 'src/auth/dto/register.dto';
 import { UpdateStudenForStudenttDto } from './dto/update-student-for-student.dto';
 import { ENotificationType } from 'src/common/enums/notification.enum';
 import { NotificationService } from '../notification/notification.service';
+
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const password = require("node-php-password");
 
 @Injectable()
 export class StudentService {
@@ -45,7 +48,8 @@ export class StudentService {
 
     createStudentDto.code = Math.floor(100000 + Math.random() * 900000);
     createStudentDto.reference = Math.floor(100000 + Math.random() * 900000);
-    createStudentDto.password = await bcrypt.hash(createStudentDto.password, 10);
+    
+    createStudentDto.password = password.hash(createStudentDto.password) 
     const student = await this.studentRepistory.save(createStudentDto);
     
     if (referenceUser) {
@@ -118,10 +122,11 @@ export class StudentService {
     return this.studentRepistory.findOne({ where: { phone }, select: ['id', 'name', 'image', 'password', 'phone', 'email', 'status', 'code'] });
   }
 
-  async matchPassword(userId: number, password: string) {
+  async matchPassword(userId: number, psw: string) {
     const student = await this.studentRepistory.findOne({ where: { id: userId }, select: ['id', 'name', 'image', 'password', 'email', 'status', 'code'] });
-
-    const isMatch = await bcrypt.compare(password, student.password);
+    
+    const isMatch = password.verify(psw, student.password, "PASSWORD_DEFAULT");
+    
     if (!isMatch) {
       throw new HttpException({ message: [EErrors.AUTH_EMAIL_PASSWORD_ERROR] }, HttpStatus.BAD_REQUEST);
     }
@@ -162,7 +167,7 @@ export class StudentService {
 
   async updatePassword(updatePasswordDto: UpdatePasswordDto) {
     await this.findOne(updatePasswordDto.id);
-    updatePasswordDto.password = await bcrypt.hash(updatePasswordDto.password, 10);
+    updatePasswordDto.password = password.hash(updatePasswordDto.password);
     return this.studentRepistory.update(updatePasswordDto.id, { password: updatePasswordDto.password });
   }
 

@@ -1,6 +1,5 @@
 import { ForbiddenException, HttpException, HttpStatus, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { EErrors } from 'src/common/enums';
-import * as bcrypt from 'bcrypt';
 import { LoginDto } from './dto/login.dto';
 import { StudentService } from 'src/modules/student/student.service';
 import { AdminService } from 'src/modules/admin/admin.service';
@@ -15,6 +14,9 @@ import { ForgotPasswordDto, VerificationPasswordDto } from './dto/forgot-passwor
 import { ResetPasswordDto } from './dto/resetPassword.dto';
 import { InviteDto } from './dto/invite-friend.dto';
 import { MailService } from 'src/common/mail/mail.service';
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const password = require("node-php-password");
 
 @Injectable()
 export class AuthService {
@@ -36,8 +38,15 @@ export class AuthService {
             throw new HttpException({ message: [EErrors.AUTH_EMAIL_PASSWORD_ERROR] }, HttpStatus.BAD_REQUEST);
         }
 
-        const isMatch = await bcrypt.compare(loginDto.password, existUser.password);
-        if (!isMatch) {
+        const isMatch = () => {
+            try {
+                return password.verify(loginDto.password, existUser.password, "PASSWORD_DEFAULT");
+            } catch (error) {
+                return false;
+            }
+        }
+
+        if (!isMatch()) {
             throw new HttpException({ message: [EErrors.AUTH_EMAIL_PASSWORD_ERROR] }, HttpStatus.BAD_REQUEST);
         }
         return existUser ?? null;
@@ -68,9 +77,16 @@ export class AuthService {
         if (!existUser) {
             throw new HttpException({ message: [EErrors.AUTH_EMAIL_PASSWORD_ERROR] }, HttpStatus.BAD_REQUEST);
         }
+        
+        const isMatch = () => {
+            try {
+                return password.verify(loginDto.password, existUser.password, "PASSWORD_DEFAULT");
+            } catch (error) {
+                return false;
+            }
+        }
 
-        const isMatch = await bcrypt.compare(loginDto.password, existUser.password);
-        if (!isMatch) {
+        if (!isMatch()) {
             throw new HttpException({ message: [EErrors.AUTH_EMAIL_PASSWORD_ERROR] }, HttpStatus.BAD_REQUEST);
         }
 
