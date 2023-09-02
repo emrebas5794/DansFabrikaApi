@@ -16,6 +16,7 @@ export class AdminService {
   constructor(@InjectRepository(Admin) private adminRepository: Repository<Admin>) {}
 
   create(createAdminDto: CreateAdminDto) {
+    createAdminDto.password = password.hash(createAdminDto.password);
     return this.adminRepository.save(createAdminDto);
   }
 

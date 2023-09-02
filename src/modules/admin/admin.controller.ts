@@ -12,8 +12,8 @@ import { RolesGuard } from 'src/common/guards/roles/roles.guard';
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
-  // @UseGuards(AuthGuard('jwt'), RolesGuard)
-  // @Roles(ERoles.ADMIN)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(ERoles.ADMIN)
   @Post()
   create(@Body() createAdminDto: CreateAdminDto) {
     return this.adminService.create(createAdminDto);

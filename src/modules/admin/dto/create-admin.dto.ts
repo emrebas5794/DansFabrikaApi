@@ -13,7 +13,7 @@ export class CreateAdminDto {
 
     @Length(8, 60, { message: EErrors.PASSWORD_MIN })
     @IsNotEmpty({ message: EErrors.PASSWORD_REQUIRED })
-    readonly password: string;
+    password: string;
     
     @IsNumber()
     @IsNotEmpty({ message: EErrors.ROLE_REQUIRED })

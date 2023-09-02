@@ -10,7 +10,7 @@ async function bootstrap() {
 
   app.enableVersioning({
     type: VersioningType.URI
-  });  
+  });
   // app.use((req, res, next) => {
   //   res.header('Access-Control-Allow-Origin', '*');
   //   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
@@ -21,7 +21,7 @@ async function bootstrap() {
   //   allowedHeaders: '*',
   //   origin: '*',
   // });
-  
+
   app.enableCors({
     origin: [
       'http://localhost',
@@ -34,6 +34,8 @@ async function bootstrap() {
       'https://admin.dansfabrika.com',
       'http://payment.dansfabrika.com',
       'https://payment.dansfabrika.com',
+      'http://yeniadmin.dansfabrika.com',
+      'https://yeniadmin.dansfabrika.com',
       'http://*.dansfabrika.com',
       'https://*.dansfabrika.com',
       'capacitor://localhost'
