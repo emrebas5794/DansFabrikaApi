@@ -22,8 +22,8 @@ export class CourseStudentsService {
     return this.courseStudentRepository.find({ where: { studentId: user.id }, relations: ["course", "course.danceType", "course.danceLevel", "course.trainer", "course.lesson"] });
   }
 
-  async findOne(id: number) {
-    const courseStudent = await this.courseStudentRepository.findOne({ where: { id }, relations: ["student", "course", "course.danceType", "course.danceLevel", "course.trainer"] });
+  async findOne(id: number, withRelations = true) {
+    const courseStudent = await this.courseStudentRepository.findOne({ where: { id }, relations: withRelations ? ["student", "course", "course.danceType", "course.danceLevel", "course.trainer"] : [] });
     if (courseStudent) {
       return courseStudent;
     }
@@ -69,7 +69,7 @@ export class CourseStudentsService {
 
   async update(updateCourseStudentDto: UpdateCourseStudentDto) {
     console.log(updateCourseStudentDto);
-    const courseStudent = await this.findOne(updateCourseStudentDto.id);
+    const courseStudent = await this.findOne(updateCourseStudentDto.id, false);
     const updated = Object.assign(courseStudent, updateCourseStudentDto);
     delete updated.id;
     console.log(updated);

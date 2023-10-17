@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put, UseGuards, Req, UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator } from '@nestjs/common';
 import { CourseService } from './course.service';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
@@ -6,6 +6,10 @@ import { AuthGuard } from '@nestjs/passport';
 import { Roles } from 'src/common/decorators/roles/roles.decorator';
 import { ERoles } from 'src/common/enums';
 import { RolesGuard } from 'src/common/guards/roles/roles.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { v4 } from "uuid";
+import { UpdateCourseImageDto } from './dto/course-image.dto';
 
 @Controller({ path: 'course', version: '1' })
 export class CourseController {
@@ -47,6 +51,25 @@ export class CourseController {
   @Put()
   update(@Body() updateCourseDto: UpdateCourseDto) {
     return this.courseService.update(updateCourseDto);
+  }
+
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(ERoles.ADMIN)
+  @Patch()
+  @UseInterceptors(FileInterceptor('image', {
+    storage: diskStorage({
+      destination: 'images/', filename(req, file, callback) {
+        callback(null, `${v4()}.${file.originalname.split(".").at(-1)}`);
+      },
+    })
+  }))
+  async updateImage(@Body() updateImageDto: UpdateCourseImageDto, @UploadedFile(new ParseFilePipe({
+    validators: [
+      new MaxFileSizeValidator({ maxSize: 1048576 * 100 }), // maxSize olayı byte cinsinden çalışıyor. (1048576 byte = 1 mb)
+      new FileTypeValidator({ fileType: 'image\/png|image\/jpeg|image\/svg\+xml|image\/gif|image\/svg' })
+    ]
+  })) image: Express.Multer.File) {
+    return this.courseService.updateImage(updateImageDto, image);
   }
 
   @UseGuards(AuthGuard('jwt'), RolesGuard)

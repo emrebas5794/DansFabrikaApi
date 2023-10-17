@@ -70,8 +70,8 @@ export class SalesService {
     return this.salesRepository.find({ where: { studentId }, relations: ['packages'] });
   }
 
-  async findOne(id: number) {
-    const sale = await this.salesRepository.findOne({ where: { id }, relations: ['student', 'packages'] });
+  async findOne(id: number, withRelations = true) {
+    const sale = await this.salesRepository.findOne({ where: { id }, relations: withRelations ? ['student', 'packages'] : [] });
     if (sale) {
       return sale;
     }
@@ -91,7 +91,7 @@ export class SalesService {
   }
 
   async update(updateSaleDto: UpdateSaleDto) {
-    const sale = await this.findOne(updateSaleDto.id);
+    const sale = await this.findOne(updateSaleDto.id, false);
     const updated = Object.assign(sale, updateSaleDto);
     delete updated.id;
     return this.salesRepository.update(updateSaleDto.id, updated);
