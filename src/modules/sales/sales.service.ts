@@ -287,8 +287,25 @@ export class SalesService {
 
   async useCredit(dto: UseCreditDto, user) {
     const course = await this.courseService.findOne(dto.course.id);
-    if (user.credit >= 10) {
-      await this.studentService.updateCredit(user.id, -10);
+    // console.log('this is the user: ', user),
+    // console.log('this is the dto', dto)
+    const userDataFromdatabase = await this.studentService.findOne(user.id)
+    // console.log('this is the userDataFromdatabase', userDataFromdatabase)
+    const packages = await this.packageService.findAll()
+    if (userDataFromdatabase.credit >= 0) {
+      const calculateCreditEquivalentToTheFiyatPrice = () => {
+        const coursePrice = course.price;
+        if(coursePrice == 150){
+          return 1
+        } else if(coursePrice == 300) {
+          return 2
+        }
+        else {
+          throw new HttpException({ message: ['could not calculate credit...'] }, HttpStatus.BAD_REQUEST);
+        }
+      }
+      const creditAmoutToBeDeducted = calculateCreditEquivalentToTheFiyatPrice()
+      await this.studentService.updateCredit(user.id, -creditAmoutToBeDeducted);
       this.emailService.sendUsedCredit(user);
       return this.courseStudentsService.create({ courseId: course.id, paidPrice: 0, status: 1, studentId: user.id, startDate: dto.date, endDate: dto.date });
     }
