@@ -292,7 +292,7 @@ export class SalesService {
     const userDataFromdatabase = await this.studentService.findOne(user.id)
     // console.log('this is the userDataFromdatabase', userDataFromdatabase)
     const packages = await this.packageService.findAll()
-    if (userDataFromdatabase.credit >= 0) {
+    if (userDataFromdatabase.credit >= 1) {
       const calculateCreditEquivalentToTheFiyatPrice = () => {
         const coursePrice = course.price;
         if(coursePrice == 150){
