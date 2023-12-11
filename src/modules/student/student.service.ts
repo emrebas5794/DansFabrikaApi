@@ -50,10 +50,12 @@ export class StudentService {
     createStudentDto.reference = Math.floor(100000 + Math.random() * 900000);
     
     createStudentDto.password = password.hash(createStudentDto.password) 
+    // console.log('this is the createStudentDto before saving : ', createStudentDto)
+    createStudentDto.gender = 2;
     const student = await this.studentRepistory.save(createStudentDto);
     
     if (referenceUser) {
-      referenceUser.credit += 1000;
+      referenceUser.score += 100;
       await this.studentRepistory.update(referenceUser, { credit: referenceUser.credit });
       await this.studentRepistory.update(student, { referenceId: referenceUser.id });
     }
