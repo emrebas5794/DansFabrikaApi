@@ -117,23 +117,36 @@ export class AuthService {
     }
 
     async inviteFriend(inviteDto: InviteDto, user) {
-        const student = await this.studentService.findOne(user.id);        
-        return this.emailService.sendReference(student, inviteDto.email);
+        try{
+            const student = await this.studentService.findOne(user.id);        
+            return this.emailService.sendReference(student, inviteDto.email);
+
+        } catch (e) {
+            console.log('error fro minviteFriend', e)
+            return e
+        }
     }
 
     async register(registerDto: RegisterDto) {
-        const student = await this.studentService.create(registerDto);
-        if (student) {
-            const sms = await this.smsService.sendSms({ message: `${student.code} Dans Fabrika için onay kodunuz. `, phone: student.phone });
-            if (sms.status === HttpStatus.OK) {
-                return { accessToken: this.jwtService.sign({ phone: student.phone, type: EVerificationType.REGISTER }, { expiresIn: '2 min' }) };
+        try{
+            // console.log('this is the rgister dtpL ', registerDto)
+            const student = await this.studentService.create(registerDto);
+            if (student) {
+                // console.log('this is hte student code:', student.code)
+                const sms = await this.smsService.sendSms({ message: `${student.code} Dans Fabrika için onay kodunuz. `, phone: student.phone });
+                if (sms.status === HttpStatus.OK) {
+                    return { accessToken: this.jwtService.sign({ phone: student.phone, type: EVerificationType.REGISTER }, { expiresIn: '2 min' }) };
+                }
+                else {
+                    throw new HttpException({ message: [EErrors.INTERNAL_SERVER_ERROR] }, HttpStatus.INTERNAL_SERVER_ERROR);
+                }
             }
             else {
                 throw new HttpException({ message: [EErrors.INTERNAL_SERVER_ERROR] }, HttpStatus.INTERNAL_SERVER_ERROR);
             }
-        }
-        else {
-            throw new HttpException({ message: [EErrors.INTERNAL_SERVER_ERROR] }, HttpStatus.INTERNAL_SERVER_ERROR);
+
+        } catch(err) {
+            console.log(err)
         }
     }
 
