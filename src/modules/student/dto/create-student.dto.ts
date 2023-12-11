@@ -28,11 +28,11 @@ export class CreateStudentDto {
     
     @IsOptional()
     @IsNumber()
-    readonly gender: number;
+     gender: number;
     
-    @IsDateString()
+    // @IsDateString()
     @IsOptional()
-    readonly birthday: Date;
+     birthday: Date | null;
 
     @IsOptional()
     @IsNumber()
