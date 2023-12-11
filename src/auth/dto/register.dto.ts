@@ -24,5 +24,9 @@ export class RegisterDto {
     reference: number;
     
 
-    code: number
+    code: number;
+
+    gender: number;
+
+    birthday: null;
 }
