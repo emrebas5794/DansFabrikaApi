@@ -10,8 +10,8 @@ export class Student {
     @Column()
     name: string;
     
-    @Column()
-    identity: string;
+    @Column({nullable: true, default: null})
+    identity: string ;
     
     @Column()
     email: string;
@@ -28,11 +28,11 @@ export class Student {
     @Column()
     country: string;
 
-    @Column()
+    @Column({default: 2})
     gender: number;
     
-    @Column()
-    birthday: Date;
+    @Column({nullable: true, default: null})
+    birthday: Date | null;
     
     @Column()
     credit: number;
@@ -57,4 +57,10 @@ export class Student {
 
     @OneToMany(() => Notification, notify => notify.student)
     notifications: Notification[]
+
+    // constructor() {
+    //     this.gender = 2;
+    //     this.birthday = null;
+    // }
+
 }
