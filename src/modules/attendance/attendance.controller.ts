@@ -8,6 +8,7 @@ import { ERoles } from 'src/common/enums';
 import { RolesGuard } from 'src/common/guards/roles/roles.guard';
 import { CreateQrDto } from './dto/create-qr.dto';
 import { CreateAttendanceForStudentDto } from './dto/create-attendance-student.dto';
+import { IsTheStudentOwnerOfTheCourse } from './dto/IsTheStudentOwnerOfTheCourse';
 
 @Controller({ path: 'attendance', version: '1' })
 export class AttendanceController {
@@ -22,6 +23,16 @@ export class AttendanceController {
     }
     return this.attendanceService.create(createAttendanceDto as CreateAttendanceDto);
   }
+
+
+
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(ERoles.ADMIN, ERoles.STUDENT)
+  @Post('isTheStudentOwnerOfTheCourse')
+  isTheStudentOwnerOfTheCourse(@Body() isTheStudentOwnerOfTheCourseDto: IsTheStudentOwnerOfTheCourse){
+    return this.attendanceService.isTheStudentOwnerOfTheCourse(isTheStudentOwnerOfTheCourseDto)
+  }
+
 
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(ERoles.ADMIN)
